@@ -7,7 +7,7 @@ export const config = { matcher: ['/calls', '/dashboard', '/settings'] };
 /**
  * Middleware function to handle authentication and security checks.
  */
-export async function middleware(request: NextRequest): Promise<NextResponse> {
+export async function proxy(request: NextRequest): Promise<NextResponse> {
   if (request.method === 'GET') {
     return await handleAuth(request);
   }
