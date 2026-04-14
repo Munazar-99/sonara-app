@@ -1,11 +1,11 @@
 'use server';
 
-import { retellClient } from '@/lib/retell/retell';
 import { PhoneCallResponse } from 'retell-sdk/resources/index.mjs';
 import { getCurrentSession } from '@/utils/auth/getCurrentSession';
 import { redirect } from 'next/navigation';
 import { Call } from '../../types';
 import { dateRanges } from '../../utils';
+import { getRetellClient } from '@/lib/retell/retell';
 
 export async function getInitialCallsAction({
   limit,
@@ -22,10 +22,12 @@ export async function getInitialCallsAction({
     console.log(new Date().toISOString(), 'No session found');
     return redirect('/login');
   }
+
   let response: PhoneCallResponse[] = [];
   const todayTimestamp = new Date().getTime();
 
   try {
+    const retellClient = getRetellClient(session.retell_api_key);
     response = (await retellClient.call.list({
       filter_criteria: {
         call_type: ['phone_call'],

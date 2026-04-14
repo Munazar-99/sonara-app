@@ -4,10 +4,10 @@ import {
   CallListParams,
   PhoneCallResponse,
 } from 'retell-sdk/resources/call.mjs';
-import { retellClient } from '@/lib/retell/retell';
 import { getCurrentSession } from '@/utils/auth/getCurrentSession';
 import { redirect } from 'next/navigation';
 import { Call } from '../../types';
+import { getRetellClient } from '@/lib/retell/retell';
 
 // TODO:implement logging
 
@@ -31,7 +31,6 @@ export async function fetchCallsAction({
 }> {
   const session = await getCurrentSession();
   if (!session) {
-    console.log(new Date().toISOString(), 'No session found');
     return redirect('/login');
   }
 
@@ -49,6 +48,7 @@ export async function fetchCallsAction({
 
   let response: PhoneCallResponse[] = [];
   try {
+    const retellClient = getRetellClient(session.retell_api_key);
     response = (await retellClient.call.list({
       limit,
       pagination_key: paginationKey,

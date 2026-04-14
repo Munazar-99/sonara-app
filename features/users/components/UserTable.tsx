@@ -67,7 +67,6 @@ export function UserTable({
 
   // Filter users based on search, status, and role
   const filteredUsers = useMemo(() => {
-    console.log({ users });
     return users.filter(user => {
       const matchesSearch =
         (user.name?.toLowerCase() ?? '').includes(searchQuery.toLowerCase()) ||
@@ -175,11 +174,11 @@ export function UserTable({
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-md border bg-white">
+      <div className="overflow-hidden rounded-md border bg-white dark:bg-gray-dark">
         <div className="overflow-x-auto">
           <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/50 hover:bg-muted/50">
+            <TableHeader className="min-w-full bg-gray-50 dark:bg-gray-dark/50">
+              <TableRow className="border-b border-gray-200 hover:bg-transparent dark:border-gray-700">
                 <TableHead className="w-[16.6%] font-medium">
                   <Button
                     variant="ghost"

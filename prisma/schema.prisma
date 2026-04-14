@@ -10,33 +10,26 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  name         String   
-  email        String   @unique @db.Text
-  passwordHash String?  // Nullable until user sets password
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now()) @updatedAt
-  lastActive   DateTime?
-
-  apiKey       String?   
-  billingRate  Float     @default(0.5) 
-  currentSpend Float     @default(0.0)
-
-  minutesUsed  Int       @default(0) 
-  callsMade    Int       @default(0) 
-
-  role   UserRole   @default(standard)
-  status UserStatus @default(pending)
-
+  id                    String                 @id @default(cuid())
+  email                 String                 @unique
+  passwordHash          String?
+  createdAt             DateTime               @default(now())
+  apiKey                String
+  billingRate           Float                  @default(0.5)
+  lastActive            DateTime?
+  role                  UserRole               @default(standard)
+  status                UserStatus             @default(pending)
+  updatedAt             DateTime               @default(now()) @updatedAt
+  currentSpend          Float                  @default(0.0)
+  callsMade             Int                    @default(0)
+  minutesUsed           Int                    @default(0)
+  name                  String
+  Jobs                  Job[]
   PasswordResetSessions PasswordResetSession[]
   Sessions              Session[]
-  Jobs                  Job[] 
 
   @@map("users")
 }
-
-
-
 
 model Session {
   id        String   @id
@@ -58,9 +51,8 @@ model Job {
   status          String
   progress        Int
   instructions    String[]
-
-  userId String?  // Optional, if jobs are tied to users
-  user   User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId          String?
+  user            User?    @relation(fields: [userId], references: [id])
 }
 
 model PasswordResetSession {
@@ -71,6 +63,14 @@ model PasswordResetSession {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("password_reset_session")
+}
+
+model EarlyAccess {
+  id           String   @id
+  email        String   @unique
+  name         String
+  createdAt    DateTime @default(now())
+  businessName String
 }
 
 enum UserRole {

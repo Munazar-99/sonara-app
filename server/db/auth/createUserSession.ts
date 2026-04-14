@@ -7,6 +7,7 @@ import { updateLastActive } from './updateLastActive';
 export async function createUserSession(
   token: string,
   userId: string,
+  retellApiKey?: string,
 ): Promise<Session> {
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
   const session: Session = {
@@ -20,6 +21,7 @@ export async function createUserSession(
       id: session.id,
       user_id: session.userId,
       expires_at: Math.floor(session.expiresAt.getTime() / 1000),
+      retell_api_key: retellApiKey,
     }),
     {
       exat: Math.floor(session.expiresAt.getTime() / 1000),

@@ -11,8 +11,9 @@ export function getMonthRange(selectedMonth: number): {
   startOfMonth: number;
   endOfMonth: number;
 } {
-  const now = new Date();
-  const year = now.getFullYear();
+  // const now = new Date();
+  // const year = now.getFullYear();
+  const year = 2025;
   const startOfMonth = new Date(year, selectedMonth - 1, 1).getTime();
   const endOfMonth = new Date(
     year,

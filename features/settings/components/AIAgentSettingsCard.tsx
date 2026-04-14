@@ -40,7 +40,6 @@ export default function AIAgentSettingsCard({
   onVoiceSelect,
 }: AIAgentSettingsCardProps) {
   const [isVoiceDialogOpen, setIsVoiceDialogOpen] = useState(false);
-  console.log({ voices });
   const [tempSelectedVoice, setTempSelectedVoice] =
     useState<VoiceResponse | null>(null);
   const [accentFilter, setAccentFilter] = useState('All');

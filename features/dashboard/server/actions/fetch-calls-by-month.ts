@@ -1,6 +1,5 @@
 'use server';
 
-import { retellClient } from '@/lib/retell/retell';
 import { getCurrentSession } from '@/utils/auth/getCurrentSession';
 import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { redirect } from 'next/navigation';
@@ -20,6 +19,7 @@ import {
   ConcurrencyData,
   MetricsData,
 } from '../../types';
+import { getRetellClient } from '@/lib/retell/retell';
 
 /**
  * Fetches call metrics for the selected month.
@@ -46,6 +46,9 @@ export async function fetchMonthlyCallMetrics(selectedMonth: number): Promise<{
 
     // Get start/end timestamps for the month
     const { startOfMonth, endOfMonth } = getMonthRange(selectedMonth);
+
+    // Initialize Retell client
+    const retellClient = getRetellClient(session.retell_api_key);
 
     // Fetch concurrency and call records in parallel
     const [concurrencyResponse, callResponse] = await Promise.all([

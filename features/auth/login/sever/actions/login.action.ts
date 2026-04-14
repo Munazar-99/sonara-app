@@ -16,7 +16,7 @@ const rateLimit = new Ratelimit({
 });
 
 export async function loginAction(
-  formData: unknown
+  formData: unknown,
 ): Promise<{ error?: string; success?: boolean }> {
   try {
     const ip = (await headers()).get('x-forwarded-for') ?? 'unknown-ip';
@@ -45,7 +45,11 @@ export async function loginAction(
     }
 
     const token = generateSessionToken();
-    const session = await createUserSession(token, existingUser.id);
+    const session = await createUserSession(
+      token,
+      existingUser.id,
+      existingUser.apiKey,
+    );
     await setSessionTokenCookie(token, session.expiresAt);
 
     return { success: true };

@@ -6,7 +6,6 @@ interface CallSummaryProps {
 }
 
 const CallSummary: React.FC<CallSummaryProps> = ({ summary }) => {
-  console.log(!!summary);
   return (
     <ScrollArea className="h-full">
       <div className="space-y-6">

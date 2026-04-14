@@ -5,7 +5,9 @@ import ProfileSettings from './SettingsContent';
 async function Settingspage() {
   const data = await settingsAction();
 
-  return <ProfileSettings voices={data.voices} user={data.user} />;
+  return data ? (
+    <ProfileSettings voices={data.voices} user={data.user} />
+  ) : null;
 }
 
 export default Settingspage;

@@ -8,13 +8,14 @@ import { redirect } from 'next/navigation';
 export async function logOut(): Promise<{ error?: string; success?: boolean }> {
   try {
     const session = await validateRequest();
-    if (!session || !('userId' in session)) {
+
+    if (!session || !('user_id' in session)) {
       console.warn('Invalid or missing session. Redirecting to login.');
       redirect('/login');
     }
 
     await Promise.all([
-      invalidateSession(session.id, session.userId),
+      invalidateSession(session.id, session.user_id),
       deleteSessionTokenCookie(),
     ]);
 

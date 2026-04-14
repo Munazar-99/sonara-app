@@ -127,7 +127,7 @@ export function UsersManagement({ initialUsers }: UsersManagementClientProps) {
         </Button>
       </div>
 
-      <Card className="overflow-hidden border bg-white shadow-sm">
+      <Card className="overflow-hidden border-none bg-white shadow-sm dark:bg-gray-dark">
         <CardContent className="p-0">
           <UserTable
             users={users}

@@ -1,15 +1,20 @@
 'use server';
 
-import { retellClient } from '@/lib/retell/retell';
+import { getRetellClient } from '@/lib/retell/retell';
+import { getCurrentSession } from '@/utils/auth/getCurrentSession';
 import { getCurrentUser } from '@/utils/auth/getCurrentUser';
 import { redirect } from 'next/navigation';
+import { isRedirectError } from 'next/dist/client/components/redirect-error';
 import { VoiceResponse } from 'retell-sdk/resources/voice.mjs';
+import { SettingsData, UserInfo } from '../../types';
 
 /**
- * Fetches the authenticated user or redirects to login if not found.
+ * Ensures the user is authenticated and returns basic user info.
+ * Redirects to login if user is not found.
  */
-async function fetchUser(): Promise<{ email: string; name: string }> {
+async function requireUser(): Promise<UserInfo> {
   const user = await getCurrentUser();
+
   if (!user) {
     redirect('/login');
   }
@@ -21,27 +26,44 @@ async function fetchUser(): Promise<{ email: string; name: string }> {
 }
 
 /**
- * Fetches voices from the Retell API, filtering only ElevenLabs voices.
+ * Retrieves voice options from the Retell API using session-based API key.
+ * Redirects to login if session is missing.
  */
-async function fetchVoices(): Promise<VoiceResponse[]> {
+async function fetchElevenLabsVoices(): Promise<VoiceResponse[]> {
+  const session = await getCurrentSession();
+
+  if (!session || !session.retell_api_key) {
+    redirect('/login');
+  }
+
   try {
-    const voiceResponses = await retellClient.voice.list();
-    return voiceResponses.filter(voice => voice.provider === 'elevenlabs');
-  } catch (error) {
-    console.error('Error fetching voices:', error);
+    const retellClient = getRetellClient(session.retell_api_key);
+    const voices = await retellClient.voice.list();
+
+    return voices.filter(voice => voice.provider === 'elevenlabs');
+  } catch (err) {
+    console.error('Failed to fetch Retell voices:', err);
     return [];
   }
 }
 
 /**
- * Handles fetching settings-related data.
+ * Main settings page server action.
+ * Returns user data and ElevenLabs voices.
  */
-export async function settingsAction() {
+export async function settingsAction(): Promise<SettingsData | void> {
   try {
-    const [user, voices] = await Promise.all([fetchUser(), fetchVoices()]);
+    const [user, voices] = await Promise.all([
+      requireUser(),
+      fetchElevenLabsVoices(),
+    ]);
+
     return { user, voices };
-  } catch (error) {
-    console.error('Error in settingsAction:', error);
+  } catch (err) {
+    if (isRedirectError(err)) return;
+
+    console.error('Unexpected error in settingsAction:', err);
+
     return {
       user: { email: 'error@example.com', name: 'Error User' },
       voices: [],

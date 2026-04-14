@@ -4,7 +4,7 @@ import { cache } from 'react';
 
 export const getCurrentUser = cache(async () => {
   const session = await validateRequest();
-  if (!session || !('userId' in session)) return null;
+  if (!session || !('user_id' in session)) return null;
 
-  return getUserById(session.userId);
+  return getUserById(session.user_id);
 });

@@ -16,7 +16,6 @@ export async function updateUserAction(
   if (!parsedData.success) {
     return { success: false, message: parsedData.error.errors };
   }
-  console.log('parsedData', { parsedData });
 
   try {
     await updateUser({
