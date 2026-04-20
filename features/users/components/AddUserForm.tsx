@@ -22,6 +22,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { AddUserFormValues, addUserSchema } from '../utils/schema';
+import RequiredFormLabel from '@/components/ui/required-form-label';
 
 interface AddUserFormProps {
   onSubmit: (data: AddUserFormValues) => void;
@@ -55,9 +56,9 @@ export function AddUserForm({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Full Name</FormLabel>
+                <RequiredFormLabel>Full Name</RequiredFormLabel>
                 <FormControl>
-                  <Input placeholder="John Doe" {...field} />
+                  <Input required placeholder="John Doe" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -68,9 +69,10 @@ export function AddUserForm({
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email Address</FormLabel>
+                <RequiredFormLabel>Email Address</RequiredFormLabel>
                 <FormControl>
                   <Input
+                    required
                     type="email"
                     placeholder="john@example.com"
                     {...field}
@@ -86,9 +88,9 @@ export function AddUserForm({
             name="apiKey"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>API Key</FormLabel>
+                <RequiredFormLabel>API Key</RequiredFormLabel>
                 <FormControl>
-                  <Input placeholder="Paste API key here" {...field} />
+                  <Input required placeholder="Paste API key here" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
