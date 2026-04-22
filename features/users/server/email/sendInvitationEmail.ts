@@ -1,7 +1,11 @@
 import InvitationEmail from '@/components/email/Invite';
 import { resend } from '@/lib/resend/resend';
 
-export const sendInvitationEmail = async (email: string, name: string) => {
+export const sendInvitationEmail = async (
+  email: string,
+  name: string,
+  token: string,
+) => {
   const { error } = await resend.emails.send({
     from: 'support@munazar-ali.dev',
     to: [email],
@@ -9,6 +13,7 @@ export const sendInvitationEmail = async (email: string, name: string) => {
     react: InvitationEmail({
       name,
       email,
+      createPasswordLink: `http://localhost:3000/set-password/${token}`,
     }),
   });
 
