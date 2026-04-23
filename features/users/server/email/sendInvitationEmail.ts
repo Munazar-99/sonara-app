@@ -13,7 +13,7 @@ export const sendInvitationEmail = async (
     react: InvitationEmail({
       name,
       email,
-      createPasswordLink: `http://localhost:3000/set-password/${token}`,
+      createPasswordLink: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/complete-signup/${token}`,
     }),
   });
 

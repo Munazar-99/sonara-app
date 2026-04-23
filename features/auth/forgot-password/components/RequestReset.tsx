@@ -1,15 +1,7 @@
 'use client';
 
 import { Input } from '@/components/ui/input';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Loader2, Mail } from 'lucide-react';
+import Link from 'next/link';
 import {
   Form,
   FormControl,
@@ -41,7 +33,7 @@ const RequestReset = () => {
       if (response && response.error) {
         handleToastNotification('error', '', response.error);
       } else {
-        handleToastNotification('success', 'Reset Password Sent', '');
+        handleToastNotification('success', 'Reset Link Sent!', '');
       }
     },
     onError: error => {
@@ -53,66 +45,62 @@ const RequestReset = () => {
       );
     },
   });
+
   function onSubmit(data: EmailFormValues) {
     mutation.mutate(data);
   }
 
   return (
-    <div className="flex items-center justify-center bg-white p-4">
-      <Card className="w-full max-w-lg !border-none bg-white shadow-none">
-        <CardHeader>
-          <div className="mb-4 flex w-full justify-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-              {mutation.isPending ? (
-                <Loader2 className="h-6 w-6 animate-spin text-primary" />
-              ) : (
-                <Mail className="h-6 w-6 text-primary" />
-              )}
-            </div>
-          </div>
-          <CardTitle className="text-center text-2xl text-dark">
-            Reset Password
-          </CardTitle>
-          <CardDescription className="text-center">
-            Enter your email address and we&#39;ll send you a link to reset your
-            password
-          </CardDescription>
-        </CardHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <RequiredFormLabel>Email</RequiredFormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="Enter your email address"
-                        {...field}
-                        className="border-stroke text-dark focus:border-primary"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-            <CardFooter>
-              <SubmitButton
-                className="w-full"
-                isSubmitting={mutation.isPending}
-                loadingMessage="Sending Reset Link"
-              >
-                Send Reset Link
-              </SubmitButton>
-            </CardFooter>
-          </form>
-        </Form>
-      </Card>
-    </div>
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-col gap-4"
+      >
+        <div className="flex flex-col items-center text-center">
+          <h1 className="text-2xl font-bold text-dark">Forgot Password?</h1>
+          <p className="text-sm text-body-color">
+            Enter your email and we&apos;ll send you a reset link
+          </p>
+        </div>
+        <div className="grid gap-6">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <RequiredFormLabel className="text-dark">
+                  Email
+                </RequiredFormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    placeholder="Enter your email address"
+                    {...field}
+                    className="border-stroke text-dark focus:border-primary"
+                  />
+                </FormControl>
+                <FormMessage className="!text-red-500" />
+              </FormItem>
+            )}
+          />
+          <SubmitButton
+            isSubmitting={mutation.isPending}
+            loadingMessage="Sending Reset Link..."
+            className="bg-primary text-white hover:bg-primary/90"
+          >
+            Send Reset Link
+          </SubmitButton>
+        </div>
+        <div className="text-center text-sm">
+          <p className="text-body-color">
+            Remember your password?{' '}
+            <Link href="/login" className="text-primary hover:underline">
+              Sign in
+            </Link>
+          </p>
+        </div>
+      </form>
+    </Form>
   );
 };
 

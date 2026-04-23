@@ -1,6 +1,5 @@
 import SetPasswordForm from '@/features/auth/set-password/components/SetPasswordForm';
-import { GalleryVerticalEnd } from 'lucide-react';
-import React from 'react';
+import Image from 'next/image';
 
 export default async function Page({
   params,
@@ -10,17 +9,24 @@ export default async function Page({
   const token = (await params).token;
 
   return (
-    <div className="flex min-h-[80vh] flex-col gap-0 bg-white p-6 md:p-10">
+    <div className="flex flex-col gap-2 bg-white p-6 md:p-10">
       <div className="flex justify-center gap-2 md:justify-start">
         <a href="#" className="flex items-center gap-2 font-medium text-dark">
-          <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-white">
-            <GalleryVerticalEnd className="size-4" />
+          <div className="flex h-6 w-6 items-center justify-center rounded-md">
+            <Image
+              className="size-4"
+              src="/sonara.png"
+              alt="Sonara AI logo"
+              width={180}
+              height={38}
+              priority
+            />
           </div>
-          Acme Inc.
+          Sorana AI
         </a>
       </div>
       <div className="flex flex-1 items-center justify-center">
-        <div className="w-full">
+        <div className="w-full max-w-xs">
           <SetPasswordForm token={token} />
         </div>
       </div>

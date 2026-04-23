@@ -1,7 +1,13 @@
-import RequestReset from '@/features/auth/forgot-password/components/RequestReset';
+import CompleteSignupForm from '@/features/auth/complete-signup/components/CompleteSignupForm';
 import Image from 'next/image';
 
-export default function ForgotPasswordPage() {
+export default async function CompleteSignupPage({
+  params,
+}: {
+  params: Promise<{ token: string }>;
+}) {
+  const token = (await params).token;
+
   return (
     <div className="flex flex-col gap-2 bg-white p-6 md:p-10">
       <div className="flex justify-center gap-2 md:justify-start">
@@ -21,7 +27,7 @@ export default function ForgotPasswordPage() {
       </div>
       <div className="flex flex-1 items-center justify-center">
         <div className="w-full max-w-xs">
-          <RequestReset />
+          <CompleteSignupForm token={token} />
         </div>
       </div>
     </div>
