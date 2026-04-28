@@ -1,12 +1,10 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearchPostgres"]
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma"
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("POSTGRES_PRISMA_URL")
-  directUrl = env("POSTGRES_URL_NON_POOLING")
+  provider = "postgresql"
 }
 
 model User {
@@ -27,6 +25,7 @@ model User {
   Jobs                  Job[]
   PasswordResetSessions PasswordResetSession[]
   Sessions              Session[]
+  authTokens            AuthToken[]
 
   @@map("users")
 }
@@ -82,4 +81,20 @@ enum UserStatus {
   active
   pending
   suspended
+}
+
+enum AuthTokenType {
+  INVITE
+  PASSWORD_RESET
+}
+
+model AuthToken {
+  id        String        @id @default(uuid())
+  type      AuthTokenType
+  userId    String
+  email     String
+  expiresAt DateTime
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("auth_tokens")
 }
