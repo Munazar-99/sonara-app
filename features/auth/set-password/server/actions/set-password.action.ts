@@ -15,7 +15,7 @@ import { hashPassword } from '@/utils/auth/hashPassword';
 
 export async function setPasswordAction(
   token: string,
-  formData: z.infer<typeof passwordSchema>
+  formData: z.infer<typeof passwordSchema>,
 ): Promise<{ error?: string; success?: boolean }> {
   try {
     // Validate form data
@@ -28,7 +28,7 @@ export async function setPasswordAction(
 
     // Generate session ID from token
     const sessionId = encodeHexLowerCase(
-      sha256(new TextEncoder().encode(token))
+      sha256(new TextEncoder().encode(token)),
     );
 
     // Retrieve the password reset token from the database
@@ -44,12 +44,16 @@ export async function setPasswordAction(
     await deleteUserPasswordResetSessionAndSetNewPassword(
       tokenRecord.userId,
       passwordHash,
-      tokenRecord.id
+      tokenRecord.id,
     );
 
     // Create a new user session
     const sessionToken = generateSessionToken();
-    const session = await createUserSession(sessionToken, tokenRecord.userId);
+    const session = await createUserSession(
+      sessionToken,
+      tokenRecord.userId,
+      tokenRecord.user.apiKey,
+    );
 
     // Set session token as an HTTP-only cookie
     await setSessionTokenCookie(sessionToken, session.expiresAt);
@@ -57,6 +61,9 @@ export async function setPasswordAction(
     return { success: true };
   } catch (error) {
     console.error('Password reset error:', error);
-    return { error: 'An error occurred while resetting the password. Please try again.' };
+    return {
+      error:
+        'An error occurred while resetting the password. Please try again.',
+    };
   }
 }
