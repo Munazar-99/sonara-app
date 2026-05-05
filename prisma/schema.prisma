@@ -92,6 +92,7 @@ model AuthToken {
   type      AuthTokenType
   userId    String
   email     String
+  usedAt    DateTime?
   expiresAt DateTime
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
