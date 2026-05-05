@@ -1,69 +1,94 @@
 'use server';
 
 import { z } from 'zod';
-import { encodeHexLowerCase } from '@oslojs/encoding';
-import { sha256 } from '@oslojs/crypto/sha2';
-import { isWithinExpirationDate } from 'oslo';
 
-import { getTokenById } from '../db/getTokenById';
-import { deleteUserPasswordResetSessionAndSetNewPassword } from '../db/setPassword';
 import { passwordSchema } from '../../utils/zod/schema';
+
 import { createUserSession } from '@/server/db/auth/createUserSession';
+
 import { generateSessionToken } from '@/utils/auth/generateSessionToken';
 import { setSessionTokenCookie } from '@/utils/auth/setSessionTokenCookie';
-import { hashPassword } from '@/utils/auth/hashPassword';
+import { resetPassword } from '../db/resetPassword';
 
+type SetPasswordResponse = {
+  success?: boolean;
+  error?: string;
+};
+
+/**
+ * This function handles the password reset process. It first validates the input data, then calls the `resetPassword` function to reset the user's password.
+ * If the password reset is successful, it generates a session token and creates a new user session in the database. It then sets the session token in a cookie.
+ * The function returns an object with a `success` property if the password reset is successful, or an `error` property with an error message if there is an error.
+ * @param token - The reset password token.
+ * @param formData - An object containing the new password and any other required fields.
+ * @returns An object with a `success` property if the password reset is successful, or an `error` property with an error message if there is an error.
+ */
 export async function setPasswordAction(
   token: string,
   formData: z.infer<typeof passwordSchema>,
-): Promise<{ error?: string; success?: boolean }> {
+): Promise<SetPasswordResponse> {
   try {
-    // Validate form data
-    const validationResult = passwordSchema.safeParse(formData);
-    if (!validationResult.success) {
-      return { error: validationResult.error.errors[0].message };
+    // Validate the input data
+    const parsed = passwordSchema.safeParse(formData);
+
+    if (!parsed.success) {
+      // Return an error object if the input data is invalid
+      return {
+        error: parsed.error.errors[0]?.message,
+      };
     }
 
-    const { newPassword } = validationResult.data;
+    // Call the `resetPassword` function to reset the user's password
+    const result = await resetPassword({
+      token,
+      password: parsed.data.newPassword,
+    });
 
-    // Generate session ID from token
-    const sessionId = encodeHexLowerCase(
-      sha256(new TextEncoder().encode(token)),
-    );
-
-    // Retrieve the password reset token from the database
-    const tokenRecord = await getTokenById(sessionId);
-    if (!tokenRecord || !isWithinExpirationDate(tokenRecord.expiresAt)) {
-      return { error: 'Invalid or expired token.' };
+    if (!result.success) {
+      // Return an error object if the password reset fails
+      return {
+        error: mapResetError(result.reason),
+      };
     }
 
-    // Hash the new password
-    const passwordHash = await hashPassword(newPassword);
-
-    // Perform atomic transaction: update password and delete reset session
-    await deleteUserPasswordResetSessionAndSetNewPassword(
-      tokenRecord.userId,
-      passwordHash,
-      tokenRecord.id,
-    );
-
-    // Create a new user session
+    // Generate a session token
     const sessionToken = generateSessionToken();
+
+    // Create a new user session in the database
     const session = await createUserSession(
       sessionToken,
-      tokenRecord.userId,
-      tokenRecord.user.apiKey,
+      result.userId,
+      result.apiKey,
     );
 
-    // Set session token as an HTTP-only cookie
+    // Set the session token in a cookie
     await setSessionTokenCookie(sessionToken, session.expiresAt);
 
-    return { success: true };
-  } catch (error) {
-    console.error('Password reset error:', error);
+    // Return a success object
     return {
-      error:
-        'An error occurred while resetting the password. Please try again.',
+      success: true,
     };
+  } catch (error) {
+    // Log any errors and return an error object
+    console.error('setPasswordAction:', error);
+
+    return {
+      error: 'Something went wrong while resetting your password.',
+    };
+  }
+}
+
+function mapResetError(
+  reason: 'NOT_FOUND' | 'EXPIRED' | 'ALREADY_USED',
+): string {
+  switch (reason) {
+    case 'NOT_FOUND':
+      return 'Invalid reset link.';
+
+    case 'EXPIRED':
+      return 'Reset link has expired.';
+
+    case 'ALREADY_USED':
+      return 'Reset link has already been used.';
   }
 }
