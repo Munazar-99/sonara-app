@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import { AuthHeroSection } from '@/components/ui/auth-hero-section';
 
 export default function AuthLayout({
   children,
@@ -6,16 +6,10 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="grid min-h-screen lg:grid-cols-2">
-      {children}
-      <div className="relative col-span-1 hidden w-full py-6 lg:block">
-        <Image
-          src="/login.png"
-          alt="Next.js logo"
-          layout="fill"
-          objectFit="cover"
-          priority
-        />
+    <div className="bg-white text-foreground">
+      <div className="font-geist flex h-[100dvh] w-[100dvw] flex-col md:flex-row">
+        {children}
+        <AuthHeroSection />
       </div>
     </div>
   );

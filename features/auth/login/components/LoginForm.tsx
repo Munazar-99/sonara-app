@@ -62,15 +62,19 @@ export function LoginForm() {
         className="flex flex-col gap-4"
       >
         <div className="flex flex-col items-center text-center">
-          <h1 className="text-2xl font-bold text-dark">Welcome Back!</h1>
-          <p className="text-sm text-body-color">Please sign in to continue</p>
+          <h1 className="animate-element animate-delay-100 text-2xl font-bold text-dark">
+            Welcome Back!
+          </h1>
+          <p className="animate-element animate-delay-200 text-sm text-body-color">
+            Please sign in to continue
+          </p>
         </div>
         <div className="grid gap-6">
           <FormField
             control={form.control}
             name="email"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="animate-element animate-delay-300">
                 <RequiredFormLabel className="text-dark">
                   Email
                 </RequiredFormLabel>
@@ -81,7 +85,7 @@ export function LoginForm() {
                     type="email"
                     placeholder="Enter your email"
                     aria-label="Email"
-                    className="focus:border-primarye border-stroke text-dark"
+                    className="focus:border-none! border-stroke text-dark"
                   />
                 </FormControl>
                 <FormMessage className="text-red-500" />
@@ -92,7 +96,7 @@ export function LoginForm() {
             control={form.control}
             name="password"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="animate-element animate-delay-400">
                 <div className="flex items-center justify-between">
                   <RequiredFormLabel className="text-dark">
                     Password
@@ -121,13 +125,13 @@ export function LoginForm() {
           <SubmitButton
             isSubmitting={mutation.isPending}
             loadingMessage="Please wait"
-            className="bg-primary text-white hover:bg-primary/90"
+            className="animate-element animate-delay-500 rounded-lg bg-primary text-white hover:bg-primary/90"
           >
             Login
           </SubmitButton>
         </div>
         <div className="text-center text-sm">
-          <p className="text-body-color">
+          <p className="animate-element animate-delay-600 text-body-color">
             By signing in, you agree to our{' '}
             <Link href="/terms" className="text-primary hover:underline">
               Terms of Service
