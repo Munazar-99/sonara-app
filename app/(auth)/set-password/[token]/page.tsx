@@ -10,7 +10,7 @@ export default async function Page({
   const token = (await params).token;
 
   return (
-    <div className="flex min-h-[80vh] flex-col gap-0 bg-white p-6 md:p-10">
+    <div className="flex flex-1 flex-col gap-0 bg-white p-6 md:p-10">
       <div className="flex justify-center gap-2 md:justify-start">
         <a href="#" className="flex items-center gap-2 font-medium text-dark">
           <div className="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-white">
@@ -20,7 +20,7 @@ export default async function Page({
         </a>
       </div>
       <div className="flex flex-1 items-center justify-center">
-        <div className="w-full">
+        <div className="w-full lg:w-3/4 xl:w-3/5">
           <SetPasswordForm token={token} />
         </div>
       </div>
