@@ -9,7 +9,7 @@ export default async function CompleteSignupPage({
   const token = (await params).token;
 
   return (
-    <div className="flex flex-col gap-2 bg-white p-6 md:p-10">
+    <div className="flex flex-1 flex-col gap-2 bg-white p-6 md:p-10">
       <div className="flex justify-center gap-2 md:justify-start">
         <a href="#" className="flex items-center gap-2 font-medium text-dark">
           <div className="flex h-6 w-6 items-center justify-center rounded-md">
