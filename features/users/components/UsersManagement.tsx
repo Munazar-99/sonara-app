@@ -38,19 +38,25 @@ export function UsersManagement({ initialUsers }: UsersManagementClientProps) {
     addUser(formData, {
       onSuccess: res => {
         if (res?.data) {
-          const fullUser: User = {
-            ...res.data,
-            name: res.data.name ?? 'Pending', // Provide default values
+          const createdUser: User = {
+            id: res.data.id,
+            name: res.data.name,
+            email: res.data.email,
+            role: res.data.role,
+            status: res.data.status,
+
+            createdAt: res.data.createdAt.toISOString(),
+            lastActive: res.data.lastActive?.toISOString() || null,
+
+            billingRate: res.data.billingRate as BillingRate,
+
             minutesUsed: 0,
             callsMade: 0,
-            createdAt: res.data.createdAt.toISOString(),
-            lastActive: res.data.lastActive
-              ? res.data.lastActive.toISOString()
-              : new Date().toISOString(),
-            apiKey: res.data.apiKey ?? undefined, // Ensure apiKey is string or undefined
-            billingRate: (res.data.billingRate as BillingRate) ?? undefined, // Ensure billingRate is of type BillingRate
+            currentSpend: 0,
           };
-          setUsers(prevUsers => [...prevUsers, fullUser]);
+
+          setUsers(prev => [...prev, createdUser]);
+
           setShowAddUser(false);
         }
       },
