@@ -30,7 +30,7 @@ import SubmitButton from '@/components/ui/submit-button';
 
 const ChangePassword = ({ token }: { token: string }) => {
   const router = useRouter();
-  
+
   const form = useForm<PasswordFormValues>({
     resolver: zodResolver(passwordSchema),
     defaultValues: {
@@ -43,7 +43,7 @@ const ChangePassword = ({ token }: { token: string }) => {
     mutationFn: async (data: PasswordFormValues) => {
       return await setPasswordAction(token, data);
     },
-    onSuccess: (response) => {
+    onSuccess: response => {
       if (response && response.error) {
         handleToastNotification(
           'error',
@@ -73,14 +73,14 @@ const ChangePassword = ({ token }: { token: string }) => {
       <Card className="w-full max-w-lg border-none bg-white shadow-none">
         <CardHeader>
           <div className="mb-4 flex w-full justify-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <div className="animate-element animate-delay-100 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
               <KeyRound className="h-6 w-6 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-center text-2xl text-dark">
+          <CardTitle className="animate-element animate-delay-200 text-center text-2xl text-dark">
             Change Password
           </CardTitle>
-          <CardDescription className="text-center">
+          <CardDescription className="animate-element animate-delay-300 text-center">
             Enter your new password below
           </CardDescription>
         </CardHeader>
@@ -91,7 +91,7 @@ const ChangePassword = ({ token }: { token: string }) => {
                 control={form.control}
                 name="newPassword"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="animate-element animate-delay-400">
                     <RequiredFormLabel>New Password</RequiredFormLabel>
                     <FormControl>
                       <PasswordInput
@@ -110,7 +110,7 @@ const ChangePassword = ({ token }: { token: string }) => {
                 control={form.control}
                 name="confirmPassword"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="animate-element animate-delay-500">
                     <RequiredFormLabel>Confirm Password</RequiredFormLabel>
                     <FormControl>
                       <PasswordInput
@@ -130,7 +130,7 @@ const ChangePassword = ({ token }: { token: string }) => {
               <SubmitButton
                 isSubmitting={isPending}
                 loadingMessage="Setting New Password"
-                className="w-full"
+                className="animate-element animate-delay-600 w-full"
               >
                 Set New Password
               </SubmitButton>

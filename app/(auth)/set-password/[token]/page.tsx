@@ -20,7 +20,7 @@ export default async function Page({
         </a>
       </div>
       <div className="flex flex-1 items-center justify-center">
-        <div className="w-full lg:w-3/4 xl:w-3/5">
+        <div className="w-full max-w-md">
           <SetPasswordForm token={token} />
         </div>
       </div>

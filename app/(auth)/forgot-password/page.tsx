@@ -14,7 +14,7 @@ const page = () => {
         </a>
       </div>
       <div className="flex flex-1 items-center justify-center">
-        <div className="w-full">
+        <div className="w-full max-w-md">
           <RequestReset />
         </div>
       </div>

@@ -62,7 +62,7 @@ const RequestReset = () => {
       <Card className="w-full max-w-lg !border-none bg-white shadow-none">
         <CardHeader>
           <div className="mb-4 flex w-full justify-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <div className="animate-element animate-delay-100 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
               {mutation.isPending ? (
                 <Loader2 className="h-6 w-6 animate-spin text-primary" />
               ) : (
@@ -70,10 +70,10 @@ const RequestReset = () => {
               )}
             </div>
           </div>
-          <CardTitle className="text-center text-2xl text-dark">
+          <CardTitle className="animate-element animate-delay-200 text-center text-2xl text-dark">
             Reset Password
           </CardTitle>
-          <CardDescription className="text-center">
+          <CardDescription className="animate-element animate-delay-300 text-center">
             Enter your email address and we&#39;ll send you a link to reset your
             password
           </CardDescription>
@@ -85,7 +85,7 @@ const RequestReset = () => {
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="animate-element animate-delay-400">
                     <RequiredFormLabel>Email</RequiredFormLabel>
                     <FormControl>
                       <Input
@@ -102,7 +102,7 @@ const RequestReset = () => {
             </CardContent>
             <CardFooter>
               <SubmitButton
-                className="w-full"
+                className="animate-element animate-delay-500 w-full"
                 isSubmitting={mutation.isPending}
                 loadingMessage="Sending Reset Link"
               >

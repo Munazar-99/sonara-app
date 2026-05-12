@@ -63,8 +63,10 @@ const CompleteSignupForm = ({ token }: { token: string }) => {
         className="flex flex-col gap-4"
       >
         <div className="flex flex-col items-center text-center">
-          <h1 className="text-2xl font-bold text-dark">Complete Your Signup</h1>
-          <p className="text-sm text-body-color">
+          <h1 className="animate-element animate-delay-200 text-2xl font-bold text-dark">
+            Complete Your Signup
+          </h1>
+          <p className="animate-element animate-delay-300 text-sm text-body-color">
             Set your password to finish creating your account
           </p>
         </div>
@@ -73,7 +75,7 @@ const CompleteSignupForm = ({ token }: { token: string }) => {
             control={form.control}
             name="password"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="animate-element animate-delay-400">
                 <RequiredFormLabel className="text-dark">
                   Password
                 </RequiredFormLabel>
@@ -94,7 +96,7 @@ const CompleteSignupForm = ({ token }: { token: string }) => {
             control={form.control}
             name="confirmPassword"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="animate-element animate-delay-500">
                 <RequiredFormLabel className="text-dark">
                   Confirm Password
                 </RequiredFormLabel>
@@ -114,13 +116,13 @@ const CompleteSignupForm = ({ token }: { token: string }) => {
           <SubmitButton
             isSubmitting={isPending}
             loadingMessage="Creating Account..."
-            className="bg-primary text-white hover:bg-primary/90"
+            className="animate-element animate-delay-600 bg-primary text-white hover:bg-primary/90"
           >
             Complete Signup
           </SubmitButton>
         </div>
         <div className="text-center text-sm">
-          <p className="text-body-color">
+          <p className="animate-element animate-delay-700 text-body-color">
             Already have an account?{' '}
             <Link href="/login" className="text-primary hover:underline">
               Sign in
@@ -128,7 +130,7 @@ const CompleteSignupForm = ({ token }: { token: string }) => {
           </p>
         </div>
         <div className="text-center text-sm">
-          <p className="text-body-color">
+          <p className="animate-element animate-delay-800 text-body-color">
             By signing up, you agree to our{' '}
             <Link href="/terms" className="text-primary hover:underline">
               Terms of Service
