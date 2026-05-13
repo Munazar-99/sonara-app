@@ -22,7 +22,6 @@ model User {
   minutesUsed           Int                    @default(0)
   name                  String
   Jobs                  Job[]
-  PasswordResetSessions PasswordResetSession[]
   Sessions              Session[]
   authTokens            AuthToken[]
 
@@ -53,15 +52,7 @@ model Job {
   user            User?    @relation(fields: [userId], references: [id])
 }
 
-model PasswordResetSession {
-  id        String   @id @default(uuid())
-  userId    String
-  email     String
-  expiresAt DateTime
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("password_reset_session")
-}
 
 model EarlyAccess {
   id           String   @id
