@@ -21,9 +21,10 @@ model User {
   callsMade             Int                    @default(0)
   minutesUsed           Int                    @default(0)
   name                  String
-  Jobs                  Job[]
   Sessions              Session[]
   authTokens            AuthToken[]
+  calls                 Call[]
+  usagePeriods          UsagePeriod[]
 
   @@map("users")
 }
@@ -35,21 +36,6 @@ model Session {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("sessions")
-}
-
-model Job {
-  id              String   @id @default(cuid())
-  workOrderNumber String   @unique
-  type            String
-  size            String
-  numberOfPallets Int
-  lineNumber      String
-  scheduledDate   DateTime
-  status          String
-  progress        Int
-  instructions    String[]
-  userId          String?
-  user            User?    @relation(fields: [userId], references: [id])
 }
 
 
@@ -88,4 +74,48 @@ model AuthToken {
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("auth_tokens")
+}
+
+model Call {
+  id                String   @id @default(cuid())
+
+  retellCallId      String   @unique
+
+  userId            String
+
+  startedAt         DateTime
+  endedAt           DateTime?
+
+  durationSeconds   Int
+
+  cost              Float
+
+  status            String
+
+  createdAt         DateTime @default(now())
+
+  user              User @relation(fields: [userId], references: [id])
+
+  @@index([userId, startedAt])
+}
+
+model UsagePeriod {
+  id              String   @id @default(cuid())
+
+  userId          String
+
+  month           Int
+  year            Int
+
+  totalCalls      Int      @default(0)
+  totalMinutes    Float    @default(0)
+  totalCost       Float    @default(0)
+
+  lastActiveAt    DateTime?
+
+  updatedAt       DateTime @updatedAt
+
+  user            User @relation(fields: [userId], references: [id])
+
+  @@unique([userId, month, year])
 }
