@@ -3,9 +3,10 @@ import prisma from '@/lib/prisma/prisma';
 async function main() {
   const adminEmail = process.env.ADMIN_EMAIL;
   const AdminApiKey = process.env.ADMIN_API_KEY;
+  const AdminAgentId = process.env.ADMIN_AGENT_ID;
 
-  if (!adminEmail || !AdminApiKey)
-    throw new Error('ADMIN_EMAIL or ADMIN_API_KEY missing');
+  if (!adminEmail || !AdminApiKey || !AdminAgentId)
+    throw new Error('One or more required environment variables are missing');
 
   const existing = await prisma.user.findFirst({
     where: { role: 'admin' },
@@ -16,7 +17,7 @@ async function main() {
     return;
   }
 
-  await prisma.user.create({
+  const adminUser = await prisma.user.create({
     data: {
       email: adminEmail,
       name: 'System Admin',
@@ -24,13 +25,26 @@ async function main() {
       role: 'admin',
       status: 'active',
       billingRate: 0,
-      callsMade: 0,
-      minutesUsed: 0,
-      currentSpend: 0,
+      currentMonthCalls: 0,
+      currentMonthMinutes: 0,
+      currentMonthCost: 0,
     },
   });
 
   console.log('Admin created');
+  const agent = await prisma.agent.upsert({
+    where: {
+      retellAgentId: AdminAgentId,
+    },
+    update: {},
+    create: {
+      retellAgentId: AdminAgentId,
+      name: 'LexAI Test Agent',
+      userId: adminUser.id,
+    },
+  });
+
+  console.log('Test agent ready:', agent.id);
 }
 
 main()
