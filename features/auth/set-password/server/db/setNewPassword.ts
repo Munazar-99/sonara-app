@@ -20,7 +20,7 @@ import {
  * @returns A promise that resolves to a `ResetPasswordResult` object with a success flag and an optional error message.
  */
 
-export async function resetPassword({
+export async function setNewPassword({
   token,
   password,
 }: ResetPasswordInput): Promise<ResetPasswordResult> {
@@ -77,6 +77,7 @@ export async function resetPassword({
       },
       data: {
         passwordHash,
+        status: 'active',
       },
     });
 

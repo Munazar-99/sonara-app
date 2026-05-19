@@ -8,7 +8,8 @@ import { createUserSession } from '@/server/db/auth/createUserSession';
 
 import { generateSessionToken } from '@/utils/auth/generateSessionToken';
 import { setSessionTokenCookie } from '@/utils/auth/setSessionTokenCookie';
-import { resetPassword } from '../db/resetPassword';
+import { mapResetError } from '../../utils/helpers';
+import { setNewPassword } from '../db/setNewPassword';
 
 type SetPasswordResponse = {
   success?: boolean;
@@ -39,7 +40,7 @@ export async function setPasswordAction(
     }
 
     // Call the `resetPassword` function to reset the user's password
-    const result = await resetPassword({
+    const result = await setNewPassword({
       token,
       password: parsed.data.newPassword,
     });
@@ -75,20 +76,5 @@ export async function setPasswordAction(
     return {
       error: 'Something went wrong while resetting your password.',
     };
-  }
-}
-
-function mapResetError(
-  reason: 'NOT_FOUND' | 'EXPIRED' | 'ALREADY_USED',
-): string {
-  switch (reason) {
-    case 'NOT_FOUND':
-      return 'Invalid reset link.';
-
-    case 'EXPIRED':
-      return 'Reset link has expired.';
-
-    case 'ALREADY_USED':
-      return 'Reset link has already been used.';
   }
 }

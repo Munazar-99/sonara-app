@@ -1,17 +1,13 @@
 'use server';
 
 import { z } from 'zod';
-import { encodeHexLowerCase } from '@oslojs/encoding';
-import { sha256 } from '@oslojs/crypto/sha2';
-import { isWithinExpirationDate } from 'oslo';
 
-import { getSignupTokenById } from '../db/getSignupTokenById';
-import { completeUserSignup } from '../db/completeUserSignup';
 import { completeSignupSchema } from '../../utils/zod/schema';
 import { createUserSession } from '@/server/db/auth/createUserSession';
 import { generateSessionToken } from '@/utils/auth/generateSessionToken';
 import { setSessionTokenCookie } from '@/utils/auth/setSessionTokenCookie';
-import { hashPassword } from '@/utils/auth/hashPassword';
+import { setNewPassword } from '@/features/auth/set-password/server/db/setNewPassword';
+import { mapResetError } from '@/features/auth/set-password/utils/helpers';
 
 export async function completeSignupAction(
   token: string,
@@ -26,36 +22,24 @@ export async function completeSignupAction(
 
     const { password } = validationResult.data;
 
-    // Generate session ID from token
-    const sessionId = encodeHexLowerCase(
-      sha256(new TextEncoder().encode(token)),
-    );
+    const result = await setNewPassword({
+      token,
+      password,
+    });
 
-    // Retrieve the signup token from the database
-    const tokenRecord = await getSignupTokenById(sessionId);
-    if (!tokenRecord || !isWithinExpirationDate(tokenRecord.expiresAt)) {
+    if (!result.success) {
+      // Return an error object if the password reset fails
       return {
-        error:
-          'Invalid or expired signup link. Please request a new invitation.',
+        error: mapResetError(result.reason),
       };
     }
-
-    // Hash the new password
-    const passwordHash = await hashPassword(password);
-
-    // Complete signup: set password, update status, and delete the token
-    const user = await completeUserSignup(
-      tokenRecord.userId,
-      passwordHash,
-      tokenRecord.id,
-    );
 
     // Create a new user session
     const sessionToken = generateSessionToken();
     const session = await createUserSession(
       sessionToken,
-      tokenRecord.userId,
-      user.apiKey,
+      result.userId,
+      result.apiKey,
     );
 
     // Set session token as an HTTP-only cookie

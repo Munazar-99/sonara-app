@@ -85,7 +85,7 @@ export function LoginForm() {
                     type="email"
                     placeholder="Enter your email"
                     aria-label="Email"
-                    className="focus:border-none! border-stroke text-dark"
+                    className="dark:text-dark"
                   />
                 </FormControl>
                 <FormMessage className="text-red-500" />
@@ -115,7 +115,7 @@ export function LoginForm() {
                     {...field}
                     placeholder="Enter your password"
                     aria-label="Password"
-                    className="border-stroke focus:border-primary"
+                    className="dark:text-dark"
                   />
                 </FormControl>
                 <FormMessage className="!text-red-500" />
