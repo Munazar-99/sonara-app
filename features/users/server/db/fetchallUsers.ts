@@ -18,9 +18,9 @@ export async function fetchUsers() {
         status: true,
         lastActive: true,
         billingRate: true,
-        callsMade: true,
-        minutesUsed: true,
-        currentSpend: true,
+        currentMonthCalls: true,
+        currentMonthMinutes: true,
+        currentMonthCost: true,
       },
     });
   } catch (error) {

@@ -15,12 +15,12 @@ export async function fetchAllUsersAction() {
       email: user.email,
       status: user.status,
       role: user.role,
-      minutesUsed: user.minutesUsed,
-      callsMade: user.callsMade,
+      minutesUsed: user.currentMonthCalls,
+      callsMade: user.currentMonthMinutes,
       createdAt: user.createdAt.toISOString(),
       lastActive: user.lastActive?.toISOString(),
       billingRate: user.billingRate,
-      currentSpend: user.currentSpend,
+      currentSpend: user.currentMonthCost,
       apiKey: decrypt(user.apiKey!),
     }));
   } catch (error) {
