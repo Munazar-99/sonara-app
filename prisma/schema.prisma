@@ -7,24 +7,45 @@ datasource db {
 }
 
 model User {
-  id                    String                 @id @default(cuid())
-  email                 String                 @unique
+  id                    String   @id @default(cuid())
+  email                 String   @unique
   passwordHash          String?
-  createdAt             DateTime               @default(now())
-  apiKey                String
-  billingRate           Float                  @default(0.5)
-  lastActive            DateTime?
-  role                  UserRole               @default(standard)
-  status                UserStatus             @default(pending)
-  updatedAt             DateTime               @default(now()) @updatedAt
-  currentSpend          Float                  @default(0.0)
-  callsMade             Int                    @default(0)
-  minutesUsed           Int                    @default(0)
+
   name                  String
-  Sessions              Session[]
-  authTokens            AuthToken[]
+
+  role                  UserRole   @default(standard)
+  status                UserStatus @default(pending)
+
+  apiKey                String
+
+  billingRate           Float      @default(0.5)
+
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+
+  lastActive            DateTime?
+
+  /**
+   * =========================================================
+   * CURRENT MONTH (CACHE LAYER FOR FAST ADMIN USERS TABLE)
+   * =========================================================
+   */
+
+  currentMonthCalls     Int     @default(0)
+  currentMonthMinutes   Int     @default(0)
+  currentMonthCost     Float   @default(0.0)
+
+  /**
+   * =========================================================
+   * RELATIONS (SOURCE OF TRUTH + SYSTEM DATA)
+   * =========================================================
+   */
+
   calls                 Call[]
   usagePeriods          UsagePeriod[]
+  Agents                Agent[]
+  Sessions              Session[]
+  authTokens            AuthToken[]
 
   @@map("users")
 }
@@ -85,6 +106,7 @@ model Call {
 
   startedAt         DateTime
   endedAt           DateTime?
+  agentId           String?
 
   durationSeconds   Int
 
@@ -118,4 +140,21 @@ model UsagePeriod {
   user            User @relation(fields: [userId], references: [id])
 
   @@unique([userId, month, year])
+}
+
+model Agent {
+  id              String   @id @default(cuid())
+
+  retellAgentId   String   @unique
+
+  name            String?
+
+  userId          String
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user            User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
