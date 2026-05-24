@@ -104,9 +104,9 @@ model Call {
 
   durationSeconds Int
 
-  providerCost Decimal @db.Decimal(10, 2)
-  customerCost Decimal @db.Decimal(10, 2)
-  profit       Decimal @db.Decimal(10, 2)
+  providerCost Decimal @db.Decimal(10, 3)
+  customerCost Decimal @db.Decimal(10, 3)
+  profit       Decimal @db.Decimal(10, 3)
 
   status String
 
@@ -128,9 +128,9 @@ model MonthlyUsage {
   totalCalls       Int @default(0)
   totalDurationSec Int @default(0)
 
-  totalProviderCost Decimal @db.Decimal(10, 2)
-  totalCustomerCost Decimal @db.Decimal(10, 2)
-  totalProfit       Decimal @db.Decimal(10, 2)
+  totalProviderCost Decimal @db.Decimal(10, 3)
+  totalCustomerCost Decimal @db.Decimal(10, 3)
+  totalProfit       Decimal @db.Decimal(10, 3)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

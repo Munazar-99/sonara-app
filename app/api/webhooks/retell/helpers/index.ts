@@ -19,7 +19,7 @@ export function calculateCustomerCallCost(durationSeconds: number) {
 // helpers/money.ts
 
 export function roundMoney(value: number) {
-  return Number(value.toFixed(2));
+  return Number(value.toFixed(3));
 }
 
 // utils/logger.ts
