@@ -6,69 +6,6 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id                    String   @id @default(cuid())
-  email                 String   @unique
-  passwordHash          String?
-
-  name                  String
-
-  role                  UserRole   @default(standard)
-  status                UserStatus @default(pending)
-
-  apiKey                String
-
-  billingRate           Float      @default(0.5)
-
-  createdAt             DateTime   @default(now())
-  updatedAt             DateTime   @updatedAt
-
-  lastActive            DateTime?
-
-  /**
-   * =========================================================
-   * CURRENT MONTH (CACHE LAYER FOR FAST ADMIN USERS TABLE)
-   * =========================================================
-   */
-
-  currentMonthCalls     Int     @default(0)
-  currentMonthMinutes   Int     @default(0)
-  currentMonthCost     Float   @default(0.0)
-
-  /**
-   * =========================================================
-   * RELATIONS (SOURCE OF TRUTH + SYSTEM DATA)
-   * =========================================================
-   */
-
-  calls                 Call[]
-  usagePeriods          UsagePeriod[]
-  Agents                Agent[]
-  Sessions              Session[]
-  authTokens            AuthToken[]
-
-  @@map("users")
-}
-
-model Session {
-  id        String   @id
-  userId    String
-  expiresAt DateTime
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("sessions")
-}
-
-
-
-model EarlyAccess {
-  id           String   @id
-  email        String   @unique
-  name         String
-  createdAt    DateTime @default(now())
-  businessName String
-}
-
 enum UserRole {
   admin
   standard
@@ -85,6 +22,60 @@ enum AuthTokenType {
   PASSWORD_RESET
 }
 
+enum WebhookEventStatus {
+  PENDING
+  PROCESSING
+  PROCESSED
+  FAILED
+  REJECTED
+}
+
+model User {
+  id           String  @id @default(cuid())
+  email        String  @unique
+  passwordHash String?
+
+  name String
+
+  role   UserRole   @default(standard)
+  status UserStatus @default(pending)
+
+  apiKey String
+
+  billingRate Decimal @db.Decimal(10, 4)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lastActive DateTime?
+
+  calls      Call[]
+  agents     Agent[]
+  sessions   Session[]
+  authTokens AuthToken[]
+
+  monthlyUsage MonthlyUsage[]
+
+  @@map("users")
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model EarlyAccess {
+  id           String   @id
+  email        String   @unique
+  name         String
+  createdAt    DateTime @default(now())
+  businessName String
+}
+
 model AuthToken {
   id        String        @id @default(uuid())
   type      AuthTokenType
@@ -93,68 +84,110 @@ model AuthToken {
   usedAt    DateTime?
   expiresAt DateTime
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime      @default(now())
 
+  @@index([userId, type])
   @@map("auth_tokens")
 }
 
 model Call {
-  id                String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  retellCallId      String   @unique
+  retellCallId String @unique
 
-  userId            String
+  userId String
 
-  startedAt         DateTime
-  endedAt           DateTime?
-  agentId           String?
+  startedAt DateTime
+  endedAt   DateTime?
 
-  durationSeconds   Int
+  agentId String?
 
-  cost              Float
+  durationSeconds Int
 
-  status            String
+  providerCost Decimal @db.Decimal(10, 2)
+  customerCost Decimal @db.Decimal(10, 2)
+  profit       Decimal @db.Decimal(10, 2)
 
-  createdAt         DateTime @default(now())
+  status String
 
-  user              User @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 
   @@index([userId, startedAt])
 }
 
-model UsagePeriod {
-  id              String   @id @default(cuid())
+model MonthlyUsage {
+  id String @id @default(cuid())
 
-  userId          String
+  userId String
 
-  month           Int
-  year            Int
+  year  Int
+  month Int
 
-  totalCalls      Int      @default(0)
-  totalMinutes    Float    @default(0)
-  totalCost       Float    @default(0)
+  totalCalls       Int @default(0)
+  totalDurationSec Int @default(0)
 
-  lastActiveAt    DateTime?
+  totalProviderCost Decimal @db.Decimal(10, 2)
+  totalCustomerCost Decimal @db.Decimal(10, 2)
+  totalProfit       Decimal @db.Decimal(10, 2)
 
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user            User @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, month, year])
+  @@unique([userId, year, month])
+  @@index([userId])
 }
 
 model Agent {
-  id              String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  retellAgentId   String   @unique
+  retellAgentId String @unique
 
-  name            String?
+  name String?
 
-  userId          String
+  userId String
 
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user            User     @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
   @@index([userId])
+}
+
+model WebhookEvent {
+  id String @id @default(cuid())
+
+  provider String
+
+  eventType String?
+
+  externalEventId String?
+
+  status WebhookEventStatus @default(PENDING)
+
+  payload Json?
+
+  rawBody String?
+
+  signature String?
+
+  headers Json?
+
+  retryCount Int @default(0)
+
+  responseStatus Int?
+
+  lastError String?
+
+  processedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
 }

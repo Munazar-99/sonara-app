@@ -25,9 +25,7 @@ async function main() {
       role: 'admin',
       status: 'active',
       billingRate: 0,
-      currentMonthCalls: 0,
-      currentMonthMinutes: 0,
-      currentMonthCost: 0,
+      lastActive: new Date(),
     },
   });
 
