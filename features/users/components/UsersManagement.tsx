@@ -48,11 +48,7 @@ export function UsersManagement({ initialUsers }: UsersManagementClientProps) {
             createdAt: res.data.createdAt.toISOString(),
             lastActive: res.data.lastActive?.toISOString() || null,
 
-            billingRate: res.data.billingRate as BillingRate,
-
-            minutesUsed: 0,
-            callsMade: 0,
-            currentSpend: 0,
+            billingRate: Number(res.data.billingRate) as BillingRate,
           };
 
           setUsers(prev => [...prev, createdUser]);

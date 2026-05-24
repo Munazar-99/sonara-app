@@ -16,6 +16,30 @@ export function calculateCustomerCallCost(durationSeconds: number) {
 
   return 1 + extraMinutes * 0.5;
 }
+// helpers/money.ts
+
 export function roundMoney(value: number) {
-  return Math.round(value * 100) / 100;
+  return Number(value.toFixed(2));
+}
+
+// utils/logger.ts
+
+export const logger = {
+  info: (message: string, meta?: unknown) => {
+    console.log(message, meta);
+  },
+
+  error: (message: string, meta?: unknown) => {
+    console.error(message, meta);
+  },
+};
+
+// utils/safeJsonParse.ts
+
+export function safeJsonParse(value: string) {
+  try {
+    return JSON.parse(value);
+  } catch {
+    return null;
+  }
 }

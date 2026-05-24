@@ -1,24 +1,28 @@
-import { RetellCallDTO, RetellWebhookBody } from '../types';
+// services/mapRetellCall.ts
 
-export function mapRetellCall(body: RetellWebhookBody): RetellCallDTO {
-  const call = body.call;
+import { RetellCallDTO, RetellCallEndedBusinessSchemaType } from '../types';
 
+export function mapRetellCall(
+  body: RetellCallEndedBusinessSchemaType,
+): RetellCallDTO {
   return {
-    retellCallId: call.call_id,
+    retellCallId: body.call.call_id,
 
-    retellAgentId: call.agent_id,
+    retellAgentId: body.call.agent_id,
 
-    status: call.call_status,
+    startedAt: new Date(body.call.start_timestamp),
 
-    startedAt: new Date(call.start_timestamp!),
+    endedAt: body.call.end_timestamp
+      ? new Date(body.call.end_timestamp as string | number)
+      : null,
 
-    endedAt: new Date(call.end_timestamp!),
-
-    durationSeconds: Math.floor(call.duration_ms! / 1000),
+    durationSeconds: Math.floor(Number(body.call.duration_ms ?? 0) / 1000),
 
     providerCost:
-      call.call_cost?.combined_cost != null
-        ? call.call_cost.combined_cost / 100
+      body.call.call_cost?.combined_cost != null
+        ? body.call.call_cost.combined_cost / 100
         : 0,
+
+    status: body.call.call_status ?? 'unknown',
   };
 }

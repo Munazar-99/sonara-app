@@ -15,16 +15,13 @@ export async function fetchAllUsersAction() {
       email: user.email,
       status: user.status,
       role: user.role,
-      minutesUsed: user.currentMonthCalls,
-      callsMade: user.currentMonthMinutes,
       createdAt: user.createdAt.toISOString(),
       lastActive: user.lastActive?.toISOString(),
-      billingRate: user.billingRate,
-      currentSpend: user.currentMonthCost,
+      billingRate: user.billingRate.toNumber(),
       apiKey: decrypt(user.apiKey!),
     }));
   } catch (error) {
     console.error('Error in fetchAllUsers:', error);
-    return { users: [] };
+    // return { users: [] };
   }
 }

@@ -21,7 +21,7 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import { User } from '../types';
-import { formatCurrency, formatDate, timeAgo } from '../utils';
+import { formatDate, timeAgo } from '../utils';
 
 interface UserDetailsDialogProps {
   user: User;
@@ -124,18 +124,18 @@ export function UserDetailsDialog({
                   <div className="text-sm text-muted-foreground">
                     Minutes Used
                   </div>
-                  <div className="text-sm font-medium">{user.minutesUsed}</div>
+                  {/* <div className="text-sm font-medium">{user.minutesUsed}</div> */}
 
                   <div className="text-sm text-muted-foreground">
                     Calls Made
                   </div>
-                  <div className="text-sm font-medium">{user.callsMade}</div>
+                  {/* <div className="text-sm font-medium">{user.callsMade}</div> */}
 
                   <div className="text-sm text-muted-foreground">
                     Current Spend
                   </div>
                   <div className="text-sm font-medium">
-                    {formatCurrency(user.currentSpend)}
+                    {/* {formatCurrency(user.currentSpend)} */}
                   </div>
                 </div>
               </CardContent>

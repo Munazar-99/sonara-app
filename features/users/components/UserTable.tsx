@@ -39,7 +39,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { User } from '../types';
-import { formatCurrency, getStatusBadgeStyles } from '../utils';
+import { getStatusBadgeStyles } from '../utils';
 import { UserStatus } from '@prisma/client';
 
 interface UserTableProps {
@@ -222,24 +222,24 @@ export function UserTable({
                   <Button
                     variant="ghost"
                     className="flex h-8 items-center p-0 font-medium"
-                    onClick={() => handleSort('minutesUsed')}
+                    // onClick={() => handleSort('minutesUsed')}
                   >
                     Usage
-                    {sortField === 'minutesUsed' && (
+                    {/* {sortField === 'minutesUsed' && (
                       <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
-                    )}
+                    )} */}
                   </Button>
                 </TableHead>
                 <TableHead className="w-[16.6%] font-medium">
                   <Button
                     variant="ghost"
                     className="flex h-8 items-center p-0 font-medium"
-                    onClick={() => handleSort('currentSpend')}
+                    // onClick={() => handleSort('currentSpend')}
                   >
                     Spend
-                    {sortField === 'currentSpend' && (
+                    {/* {sortField === 'currentSpend' && (
                       <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
-                    )}
+                    )} */}
                   </Button>
                 </TableHead>
                 <TableHead className="w-[80px] text-right font-medium">
@@ -275,15 +275,15 @@ export function UserTable({
                   </TableCell>
                   <TableCell className="hidden w-[16.6%] lg:table-cell">
                     <div className="flex flex-col">
-                      <span>{user.minutesUsed} min</span>
+                      {/* <span>{user.minutesUsed} min</span> */}
                       <span className="text-xs text-muted-foreground">
-                        {user.callsMade} calls
+                        {/* {user.callsMade} calls */}
                       </span>
                     </div>
                   </TableCell>
                   <TableCell className="w-[16.6%]">
                     <div className="font-medium">
-                      {formatCurrency(user.currentSpend)}
+                      {/* {formatCurrency(user.currentSpend)} */}
                     </div>
                   </TableCell>
                   <TableCell className="w-[80px] text-right">
