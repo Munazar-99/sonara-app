@@ -59,17 +59,20 @@ export function LoginForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-6"
       >
-        <div className="flex flex-col items-center text-center">
-          <h1 className="animate-element animate-delay-100 text-2xl font-bold text-dark">
-            Welcome Back!
+        <div className="flex flex-col gap-2">
+          <p className="animate-element animate-delay-100 text-sm font-medium text-primary">
+            Workspace sign in
+          </p>
+          <h1 className="animate-element animate-delay-100 text-3xl font-semibold tracking-normal text-dark">
+            Welcome back
           </h1>
-          <p className="animate-element animate-delay-200 text-sm text-body-color">
-            Please sign in to continue
+          <p className="animate-element animate-delay-200 max-w-sm text-sm leading-6 text-body-color">
+            Sign in to manage calls, agents, users, and workspace settings.
           </p>
         </div>
-        <div className="grid gap-6">
+        <div className="grid gap-5">
           <FormField
             control={form.control}
             name="email"
@@ -85,7 +88,7 @@ export function LoginForm() {
                     type="email"
                     placeholder="Enter your email"
                     aria-label="Email"
-                    className="dark:text-dark"
+                    className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-dark shadow-none focus-visible:ring-2"
                   />
                 </FormControl>
                 <FormMessage className="text-red-500" />
@@ -115,7 +118,7 @@ export function LoginForm() {
                     {...field}
                     placeholder="Enter your password"
                     aria-label="Password"
-                    className="dark:text-dark"
+                    className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-dark shadow-none focus-visible:ring-2"
                   />
                 </FormControl>
                 <FormMessage className="!text-red-500" />
@@ -125,13 +128,13 @@ export function LoginForm() {
           <SubmitButton
             isSubmitting={mutation.isPending}
             loadingMessage="Please wait"
-            className="animate-element animate-delay-500 rounded-lg bg-primary text-white hover:bg-primary/90"
+            className="animate-element animate-delay-500 h-11 rounded-lg bg-primary text-sm font-semibold text-white shadow-sm hover:bg-primary/90"
           >
             Login
           </SubmitButton>
         </div>
-        <div className="text-center text-sm">
-          <p className="animate-element animate-delay-600 text-body-color">
+        <div className="text-sm">
+          <p className="animate-element animate-delay-600 leading-6 text-body-color">
             By signing in, you agree to our{' '}
             <Link href="/terms" className="text-primary hover:underline">
               Terms of Service

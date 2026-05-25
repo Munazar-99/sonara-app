@@ -3,15 +3,25 @@ import { TestimonialCard } from './testimonial-card';
 
 export const AuthHeroSection = () => {
   return (
-    <section className="relative hidden flex-1 p-4 md:block">
+    <section className="relative hidden flex-[1.05] p-3 md:block lg:p-4">
       <div
-        className="animate-slide-right animate-delay-300 absolute inset-4 rounded-3xl bg-cover bg-center"
+        className="animate-slide-right animate-delay-300 absolute inset-3 overflow-hidden rounded-2xl bg-cover bg-center lg:inset-4"
         style={{
           backgroundImage: `url(https://images.unsplash.com/photo-1642615835477-d303d7dc9ee9?w=2160&q=80)`,
         }}
-      ></div>
+      >
+        <div className="absolute inset-0 bg-slate-950/20" />
+        <div className="absolute left-8 top-8 max-w-md text-white lg:left-10 lg:top-10">
+          <p className="animate-element animate-delay-500 text-sm font-medium text-white/80">
+            Sonara AI
+          </p>
+          <h2 className="animate-element animate-delay-600 mt-3 text-3xl font-semibold leading-tight tracking-normal xl:text-4xl">
+            A calmer operating layer for voice teams.
+          </h2>
+        </div>
+      </div>
       {sampleTestimonials.length > 0 && (
-        <div className="absolute bottom-8 left-1/2 flex w-full -translate-x-1/2 justify-center gap-4 px-8">
+        <div className="absolute bottom-8 left-1/2 flex w-full -translate-x-1/2 justify-center gap-4 px-8 lg:bottom-10">
           <TestimonialCard
             testimonial={sampleTestimonials[0]}
             delay="animate-delay-1000"

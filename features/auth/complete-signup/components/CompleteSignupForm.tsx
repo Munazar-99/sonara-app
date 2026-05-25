@@ -60,17 +60,20 @@ const CompleteSignupForm = ({ token }: { token: string }) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-6"
       >
-        <div className="flex flex-col items-center text-center">
-          <h1 className="animate-element animate-delay-200 text-2xl font-bold text-dark">
-            Complete Your Signup
+        <div className="flex flex-col gap-2">
+          <p className="animate-element animate-delay-100 text-sm font-medium text-primary">
+            Account invitation
+          </p>
+          <h1 className="animate-element animate-delay-200 text-3xl font-semibold tracking-normal text-dark">
+            Complete your signup
           </h1>
-          <p className="animate-element animate-delay-300 text-sm text-body-color">
-            Set your password to finish creating your account
+          <p className="animate-element animate-delay-300 max-w-sm text-sm leading-6 text-body-color">
+            Create a secure password to activate your Sonara AI workspace.
           </p>
         </div>
-        <div className="grid gap-6">
+        <div className="grid gap-5">
           <FormField
             control={form.control}
             name="password"
@@ -85,7 +88,7 @@ const CompleteSignupForm = ({ token }: { token: string }) => {
                     {...field}
                     placeholder="Enter your password"
                     aria-label="Password"
-                    className="border-stroke focus:border-primary"
+                    className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-dark shadow-none focus-visible:ring-2"
                   />
                 </FormControl>
                 <FormMessage className="!text-red-500" />
@@ -106,7 +109,7 @@ const CompleteSignupForm = ({ token }: { token: string }) => {
                     {...field}
                     placeholder="Confirm your password"
                     aria-label="Confirm Password"
-                    className="border-stroke focus:border-primary"
+                    className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-dark shadow-none focus-visible:ring-2"
                   />
                 </FormControl>
                 <FormMessage className="!text-red-500" />
@@ -116,12 +119,12 @@ const CompleteSignupForm = ({ token }: { token: string }) => {
           <SubmitButton
             isSubmitting={isPending}
             loadingMessage="Creating Account..."
-            className="animate-element animate-delay-600 bg-primary text-white hover:bg-primary/90"
+            className="animate-element animate-delay-600 h-11 rounded-lg bg-primary text-sm font-semibold text-white shadow-sm hover:bg-primary/90"
           >
             Complete Signup
           </SubmitButton>
         </div>
-        <div className="text-center text-sm">
+        <div className="text-sm">
           <p className="animate-element animate-delay-700 text-body-color">
             Already have an account?{' '}
             <Link href="/login" className="text-primary hover:underline">
@@ -129,7 +132,7 @@ const CompleteSignupForm = ({ token }: { token: string }) => {
             </Link>
           </p>
         </div>
-        <div className="text-center text-sm">
+        <div className="text-sm">
           <p className="animate-element animate-delay-800 text-body-color">
             By signing up, you agree to our{' '}
             <Link href="/terms" className="text-primary hover:underline">

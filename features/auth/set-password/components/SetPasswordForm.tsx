@@ -4,14 +4,6 @@ import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { KeyRound } from 'lucide-react';
 import {
   Form,
@@ -69,75 +61,71 @@ const ChangePassword = ({ token }: { token: string }) => {
   };
 
   return (
-    <div className="flex items-center justify-center bg-white p-4">
-      <Card className="w-full max-w-lg border-none bg-white shadow-none">
-        <CardHeader>
-          <div className="mb-4 flex w-full justify-center">
-            <div className="animate-element animate-delay-100 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-              <KeyRound className="h-6 w-6 text-primary" />
-            </div>
-          </div>
-          <CardTitle className="animate-element animate-delay-200 text-center text-2xl text-dark">
-            Change Password
-          </CardTitle>
-          <CardDescription className="animate-element animate-delay-300 text-center">
-            Enter your new password below
-          </CardDescription>
-        </CardHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
-            <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="newPassword"
-                render={({ field }) => (
-                  <FormItem className="animate-element animate-delay-400">
-                    <RequiredFormLabel>New Password</RequiredFormLabel>
-                    <FormControl>
-                      <PasswordInput
-                        required
-                        {...field}
-                        placeholder="Enter your password"
-                        aria-label="Password"
-                        className="border-stroke focus:border-primary"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem className="animate-element animate-delay-500">
-                    <RequiredFormLabel>Confirm Password</RequiredFormLabel>
-                    <FormControl>
-                      <PasswordInput
-                        required
-                        {...field}
-                        placeholder="Confirm your password"
-                        aria-label="Password"
-                        className="border-stroke focus:border-primary"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-            <CardFooter>
-              <SubmitButton
-                isSubmitting={isPending}
-                loadingMessage="Setting New Password"
-                className="animate-element animate-delay-600 w-full"
-              >
-                Set New Password
-              </SubmitButton>
-            </CardFooter>
-          </form>
-        </Form>
-      </Card>
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-2">
+        <div className="animate-element animate-delay-100 mb-1 flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10">
+          <KeyRound className="h-5 w-5 text-primary" />
+        </div>
+        <p className="animate-element animate-delay-100 text-sm font-medium text-primary">
+          Secure password setup
+        </p>
+        <h1 className="animate-element animate-delay-200 text-3xl font-semibold tracking-normal text-dark">
+          Set a new password
+        </h1>
+        <p className="animate-element animate-delay-300 max-w-sm text-sm leading-6 text-body-color">
+          Choose a password that keeps your workspace protected.
+        </p>
+      </div>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-5">
+          <FormField
+            control={form.control}
+            name="newPassword"
+            render={({ field }) => (
+              <FormItem className="animate-element animate-delay-400">
+                <RequiredFormLabel>New Password</RequiredFormLabel>
+                <FormControl>
+                  <PasswordInput
+                    required
+                    {...field}
+                    placeholder="Enter your password"
+                    aria-label="Password"
+                    className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-dark shadow-none focus-visible:ring-2"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem className="animate-element animate-delay-500">
+                <RequiredFormLabel>Confirm Password</RequiredFormLabel>
+                <FormControl>
+                  <PasswordInput
+                    required
+                    {...field}
+                    placeholder="Confirm your password"
+                    aria-label="Password"
+                    className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-dark shadow-none focus-visible:ring-2"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <SubmitButton
+            isSubmitting={isPending}
+            loadingMessage="Setting new password"
+            className="animate-element animate-delay-600 h-11 w-full rounded-lg bg-primary text-sm font-semibold text-white shadow-sm hover:bg-primary/90"
+          >
+            Set new password
+          </SubmitButton>
+        </form>
+      </Form>
     </div>
   );
 };
