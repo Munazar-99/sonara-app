@@ -2,7 +2,7 @@
 
 import { getUserByEmail } from '@/server/db/auth/getUserByEmail';
 import { getCurrentUser } from '@/utils/auth/getCurrentUser';
-import { hashPassword } from '@/utils/auth/hashPassword';
+import { verifyPassword } from '@/utils/auth/hashPassword';
 import { securityFormSchema } from '../../utils/schema';
 import { z } from 'zod';
 import { redirect } from 'next/navigation';
@@ -22,8 +22,10 @@ async function verifyOldPassword(
   const existingUser = await getUserByEmail(userEmail);
   if (!existingUser?.passwordHash) throw new Error('Invalid credentials');
 
-  const isOldPasswordCorrect =
-    existingUser.passwordHash === (await hashPassword(oldPassword));
+  const isOldPasswordCorrect = await verifyPassword(
+    oldPassword,
+    existingUser.passwordHash,
+  );
   if (!isOldPasswordCorrect) throw new Error('Invalid credentials');
 
   return { userId: existingUser.id, oldHash: existingUser.passwordHash };

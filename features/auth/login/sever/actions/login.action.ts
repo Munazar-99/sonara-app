@@ -8,7 +8,8 @@ import { getUserByEmail } from '@/server/db/auth/getUserByEmail';
 import { generateSessionToken } from '@/utils/auth/generateSessionToken';
 import { setSessionTokenCookie } from '@/utils/auth/setSessionTokenCookie';
 import { createUserSession } from '@/server/db/auth/createUserSession';
-import { hashPassword } from '@/utils/auth/hashPassword';
+import { verifyPassword } from '@/utils/auth/hashPassword';
+import { invalidateSession } from '@/server/db/auth/invalidateSession';
 
 const rateLimit = new Ratelimit({
   redis,
@@ -33,15 +34,23 @@ export async function loginAction(
 
     const { email, password } = parsedData.data;
     const existingUser = await getUserByEmail(email);
+    const invalidCredentials = {
+      error: 'Invalid credentials. Please try again.',
+    };
 
     if (!existingUser?.passwordHash) {
-      return { error: 'Invalid credentials. Please try again.' };
+      return invalidCredentials;
     }
 
-    // Securely hash and compare passwords
-    const hash = await hashPassword(password);
-    if (existingUser.passwordHash !== hash) {
-      return { error: 'Invalid credentials. Please try again.' };
+    if (existingUser.status !== 'active') return invalidCredentials;
+
+    const isPasswordValid = await verifyPassword(
+      password,
+      existingUser.passwordHash,
+    );
+
+    if (!isPasswordValid) {
+      return invalidCredentials;
     }
 
     const token = generateSessionToken();
@@ -50,7 +59,14 @@ export async function loginAction(
       existingUser.id,
       existingUser.apiKey,
     );
-    await setSessionTokenCookie(token, session.expiresAt);
+
+    try {
+      await setSessionTokenCookie(token, session.expiresAt);
+    } catch (error) {
+      await invalidateSession(session.id, existingUser.id);
+
+      throw error;
+    }
 
     return { success: true };
   } catch (error) {
