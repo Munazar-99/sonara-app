@@ -63,16 +63,16 @@ const ChangePassword = ({ token }: { token: string }) => {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <div className="animate-element animate-delay-100 mb-1 flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10">
+        <div className="animate-element animate-delay-100 mb-1 flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10 dark:bg-primary/15">
           <KeyRound className="h-5 w-5 text-primary" />
         </div>
         <p className="animate-element animate-delay-100 text-sm font-medium text-primary">
           Secure password setup
         </p>
-        <h1 className="animate-element animate-delay-200 text-3xl font-semibold tracking-normal text-dark">
+        <h1 className="animate-element animate-delay-200 text-3xl font-semibold tracking-normal text-dark dark:text-white">
           Set a new password
         </h1>
-        <p className="animate-element animate-delay-300 max-w-sm text-sm leading-6 text-body-color">
+        <p className="animate-element animate-delay-300 max-w-sm text-sm leading-6 text-body-color dark:text-slate-400">
           Choose a password that keeps your workspace protected.
         </p>
       </div>
@@ -84,14 +84,16 @@ const ChangePassword = ({ token }: { token: string }) => {
             name="newPassword"
             render={({ field }) => (
               <FormItem className="animate-element animate-delay-400">
-                <RequiredFormLabel>New Password</RequiredFormLabel>
+                <RequiredFormLabel className="dark:text-slate-200">
+                  New Password
+                </RequiredFormLabel>
                 <FormControl>
                   <PasswordInput
                     required
                     {...field}
                     placeholder="Enter your password"
                     aria-label="Password"
-                    className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-dark shadow-none focus-visible:ring-2"
+                    className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-dark shadow-none focus-visible:ring-2 dark:border-white/10 dark:bg-white/[0.06] dark:text-white dark:placeholder:text-slate-500 dark:focus-visible:ring-primary/60"
                   />
                 </FormControl>
                 <FormMessage />
@@ -103,14 +105,16 @@ const ChangePassword = ({ token }: { token: string }) => {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem className="animate-element animate-delay-500">
-                <RequiredFormLabel>Confirm Password</RequiredFormLabel>
+                <RequiredFormLabel className="dark:text-slate-200">
+                  Confirm Password
+                </RequiredFormLabel>
                 <FormControl>
                   <PasswordInput
                     required
                     {...field}
                     placeholder="Confirm your password"
                     aria-label="Password"
-                    className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-dark shadow-none focus-visible:ring-2"
+                    className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-dark shadow-none focus-visible:ring-2 dark:border-white/10 dark:bg-white/[0.06] dark:text-white dark:placeholder:text-slate-500 dark:focus-visible:ring-primary/60"
                   />
                 </FormControl>
                 <FormMessage />

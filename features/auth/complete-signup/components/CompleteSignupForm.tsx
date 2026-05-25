@@ -66,10 +66,10 @@ const CompleteSignupForm = ({ token }: { token: string }) => {
           <p className="animate-element animate-delay-100 text-sm font-medium text-primary">
             Account invitation
           </p>
-          <h1 className="animate-element animate-delay-200 text-3xl font-semibold tracking-normal text-dark">
+          <h1 className="animate-element animate-delay-200 text-3xl font-semibold tracking-normal text-dark dark:text-white">
             Complete your signup
           </h1>
-          <p className="animate-element animate-delay-300 max-w-sm text-sm leading-6 text-body-color">
+          <p className="animate-element animate-delay-300 max-w-sm text-sm leading-6 text-body-color dark:text-slate-400">
             Create a secure password to activate your Sonara AI workspace.
           </p>
         </div>
@@ -79,7 +79,7 @@ const CompleteSignupForm = ({ token }: { token: string }) => {
             name="password"
             render={({ field }) => (
               <FormItem className="animate-element animate-delay-400">
-                <RequiredFormLabel className="text-dark">
+                <RequiredFormLabel className="text-dark dark:text-slate-200">
                   Password
                 </RequiredFormLabel>
                 <FormControl>
@@ -88,7 +88,7 @@ const CompleteSignupForm = ({ token }: { token: string }) => {
                     {...field}
                     placeholder="Enter your password"
                     aria-label="Password"
-                    className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-dark shadow-none focus-visible:ring-2"
+                    className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-dark shadow-none focus-visible:ring-2 dark:border-white/10 dark:bg-white/[0.06] dark:text-white dark:placeholder:text-slate-500 dark:focus-visible:ring-primary/60"
                   />
                 </FormControl>
                 <FormMessage className="!text-red-500" />
@@ -100,7 +100,7 @@ const CompleteSignupForm = ({ token }: { token: string }) => {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem className="animate-element animate-delay-500">
-                <RequiredFormLabel className="text-dark">
+                <RequiredFormLabel className="text-dark dark:text-slate-200">
                   Confirm Password
                 </RequiredFormLabel>
                 <FormControl>
@@ -109,7 +109,7 @@ const CompleteSignupForm = ({ token }: { token: string }) => {
                     {...field}
                     placeholder="Confirm your password"
                     aria-label="Confirm Password"
-                    className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-dark shadow-none focus-visible:ring-2"
+                    className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-dark shadow-none focus-visible:ring-2 dark:border-white/10 dark:bg-white/[0.06] dark:text-white dark:placeholder:text-slate-500 dark:focus-visible:ring-primary/60"
                   />
                 </FormControl>
                 <FormMessage className="!text-red-500" />
@@ -125,7 +125,7 @@ const CompleteSignupForm = ({ token }: { token: string }) => {
           </SubmitButton>
         </div>
         <div className="text-sm">
-          <p className="animate-element animate-delay-700 text-body-color">
+          <p className="animate-element animate-delay-700 text-body-color dark:text-slate-400">
             Already have an account?{' '}
             <Link href="/login" className="text-primary hover:underline">
               Sign in
@@ -133,7 +133,7 @@ const CompleteSignupForm = ({ token }: { token: string }) => {
           </p>
         </div>
         <div className="text-sm">
-          <p className="animate-element animate-delay-800 text-body-color">
+          <p className="animate-element animate-delay-800 text-body-color dark:text-slate-500">
             By signing up, you agree to our{' '}
             <Link href="/terms" className="text-primary hover:underline">
               Terms of Service

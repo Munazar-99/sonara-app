@@ -6,7 +6,7 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-[100dvh] bg-white text-foreground">
+    <div className="min-h-[100dvh] bg-white text-foreground dark:bg-[#090d14]">
       <div className="font-geist flex min-h-[100dvh] w-full flex-col md:flex-row">
         {children}
         <AuthHeroSection />

@@ -65,10 +65,10 @@ export function LoginForm() {
           <p className="animate-element animate-delay-100 text-sm font-medium text-primary">
             Workspace sign in
           </p>
-          <h1 className="animate-element animate-delay-100 text-3xl font-semibold tracking-normal text-dark">
+          <h1 className="animate-element animate-delay-100 text-3xl font-semibold tracking-normal text-dark dark:text-white">
             Welcome back
           </h1>
-          <p className="animate-element animate-delay-200 max-w-sm text-sm leading-6 text-body-color">
+          <p className="animate-element animate-delay-200 max-w-sm text-sm leading-6 text-body-color dark:text-slate-400">
             Sign in to manage calls, agents, users, and workspace settings.
           </p>
         </div>
@@ -78,7 +78,7 @@ export function LoginForm() {
             name="email"
             render={({ field }) => (
               <FormItem className="animate-element animate-delay-300">
-                <RequiredFormLabel className="text-dark">
+                <RequiredFormLabel className="text-dark dark:text-slate-200">
                   Email
                 </RequiredFormLabel>
                 <FormControl>
@@ -88,7 +88,7 @@ export function LoginForm() {
                     type="email"
                     placeholder="Enter your email"
                     aria-label="Email"
-                    className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-dark shadow-none focus-visible:ring-2"
+                    className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-dark shadow-none focus-visible:ring-2 dark:border-white/10 dark:bg-white/[0.06] dark:text-white dark:placeholder:text-slate-500 dark:focus-visible:ring-primary/60"
                   />
                 </FormControl>
                 <FormMessage className="text-red-500" />
@@ -101,13 +101,13 @@ export function LoginForm() {
             render={({ field }) => (
               <FormItem className="animate-element animate-delay-400">
                 <div className="flex items-center justify-between">
-                  <RequiredFormLabel className="text-dark">
+                  <RequiredFormLabel className="text-dark dark:text-slate-200">
                     Password
                   </RequiredFormLabel>
                   <Link
                     prefetch={true}
                     href="/forgot-password"
-                    className="text-sm text-dark underline-offset-4 hover:underline"
+                    className="text-sm text-dark underline-offset-4 hover:underline dark:text-slate-300 dark:hover:text-primary"
                   >
                     Forgot your password?
                   </Link>
@@ -118,7 +118,7 @@ export function LoginForm() {
                     {...field}
                     placeholder="Enter your password"
                     aria-label="Password"
-                    className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-dark shadow-none focus-visible:ring-2"
+                    className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-dark shadow-none focus-visible:ring-2 dark:border-white/10 dark:bg-white/[0.06] dark:text-white dark:placeholder:text-slate-500 dark:focus-visible:ring-primary/60"
                   />
                 </FormControl>
                 <FormMessage className="!text-red-500" />
@@ -134,7 +134,7 @@ export function LoginForm() {
           </SubmitButton>
         </div>
         <div className="text-sm">
-          <p className="animate-element animate-delay-600 leading-6 text-body-color">
+          <p className="animate-element animate-delay-600 leading-6 text-body-color dark:text-slate-500">
             By signing in, you agree to our{' '}
             <Link href="/terms" className="text-primary hover:underline">
               Terms of Service

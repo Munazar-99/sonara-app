@@ -52,7 +52,7 @@ const RequestReset = () => {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <div className="animate-element animate-delay-100 mb-1 flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10">
+        <div className="animate-element animate-delay-100 mb-1 flex h-11 w-11 items-center justify-center rounded-lg bg-primary/10 dark:bg-primary/15">
           {mutation.isPending ? (
             <Loader2 className="h-5 w-5 animate-spin text-primary" />
           ) : (
@@ -62,10 +62,10 @@ const RequestReset = () => {
         <p className="animate-element animate-delay-100 text-sm font-medium text-primary">
           Password recovery
         </p>
-        <h1 className="animate-element animate-delay-200 text-3xl font-semibold tracking-normal text-dark">
+        <h1 className="animate-element animate-delay-200 text-3xl font-semibold tracking-normal text-dark dark:text-white">
           Reset your password
         </h1>
-        <p className="animate-element animate-delay-300 max-w-sm text-sm leading-6 text-body-color">
+        <p className="animate-element animate-delay-300 max-w-sm text-sm leading-6 text-body-color dark:text-slate-400">
           Enter your email and we&apos;ll send a secure reset link if your
           account exists.
         </p>
@@ -78,13 +78,15 @@ const RequestReset = () => {
             name="email"
             render={({ field }) => (
               <FormItem className="animate-element animate-delay-400">
-                <RequiredFormLabel>Email</RequiredFormLabel>
+                <RequiredFormLabel className="dark:text-slate-200">
+                  Email
+                </RequiredFormLabel>
                 <FormControl>
                   <Input
                     type="email"
                     placeholder="Enter your email address"
                     {...field}
-                    className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-dark shadow-none focus-visible:ring-2"
+                    className="h-11 rounded-lg border border-slate-200 bg-slate-50 px-4 text-dark shadow-none focus-visible:ring-2 dark:border-white/10 dark:bg-white/[0.06] dark:text-white dark:placeholder:text-slate-500 dark:focus-visible:ring-primary/60"
                   />
                 </FormControl>
                 <FormMessage />
