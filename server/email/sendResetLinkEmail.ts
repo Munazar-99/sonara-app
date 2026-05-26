@@ -1,5 +1,6 @@
 import ResetPasswordEmail from '@/components/email/Reset';
 import { resend } from '@/lib/resend/resend';
+import { getAppUrl } from '@/utils/url/getAppUrl';
 
 export const sendResetLinkEmail = async (
   email: string,
@@ -12,7 +13,7 @@ export const sendResetLinkEmail = async (
     subject: 'Reset Password',
     react: ResetPasswordEmail({
       userName: name,
-      resetLink: `http://localhost:3000/set-password/${token}`,
+      resetLink: `${getAppUrl()}/set-password/${token}`,
     }),
   });
 

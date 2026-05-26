@@ -39,8 +39,8 @@ const ChangePassword = ({ token }: { token: string }) => {
       if (response && response.error) {
         handleToastNotification(
           'error',
-          'Reset Link Expired',
-          'Please Request a new Password Reset Link',
+          'Password reset failed',
+          response.error,
         );
       } else {
         handleToastNotification('success', 'Password Reset Successfully', '');

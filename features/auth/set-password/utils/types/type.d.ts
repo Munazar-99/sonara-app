@@ -14,4 +14,5 @@ export type ResetPasswordResult =
 export type ResetPasswordInput = {
   token: string;
   password: string;
+  expectedType: 'PASSWORD_RESET' | 'INVITE';
 };

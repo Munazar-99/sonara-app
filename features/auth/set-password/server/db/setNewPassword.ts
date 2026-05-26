@@ -23,6 +23,7 @@ import {
 export async function setNewPassword({
   token,
   password,
+  expectedType,
 }: ResetPasswordInput): Promise<ResetPasswordResult> {
   const hashedToken = hashToken(token);
 
@@ -40,10 +41,12 @@ export async function setNewPassword({
         userId: true,
         expiresAt: true,
         usedAt: true,
+        type: true,
 
         user: {
           select: {
             apiKey: true,
+            status: true,
           },
         },
       },
@@ -51,6 +54,13 @@ export async function setNewPassword({
     // If the token is expired or invalid, return an error
 
     if (!tokenRecord) {
+      return {
+        success: false,
+        reason: 'NOT_FOUND',
+      };
+    }
+
+    if (tokenRecord.type !== expectedType) {
       return {
         success: false,
         reason: 'NOT_FOUND',
@@ -71,23 +81,44 @@ export async function setNewPassword({
       };
     }
 
+    if (
+      expectedType === 'PASSWORD_RESET' &&
+      tokenRecord.user.status !== 'active'
+    ) {
+      return {
+        success: false,
+        reason: 'NOT_FOUND',
+      };
+    }
+
+    const consumedToken = await tx.authToken.updateMany({
+      where: {
+        id: tokenRecord.id,
+        type: expectedType,
+        usedAt: null,
+        expiresAt: {
+          gt: new Date(),
+        },
+      },
+      data: {
+        usedAt: new Date(),
+      },
+    });
+
+    if (consumedToken.count !== 1) {
+      return {
+        success: false,
+        reason: 'ALREADY_USED',
+      };
+    }
+
     await tx.user.update({
       where: {
         id: tokenRecord.userId,
       },
       data: {
         passwordHash,
-        status: 'active',
-      },
-    });
-
-    // Update the user's password and consume the authentication token
-    await tx.authToken.update({
-      where: {
-        id: tokenRecord.id,
-      },
-      data: {
-        usedAt: new Date(),
+        status: expectedType === 'INVITE' ? 'active' : undefined,
       },
     });
 

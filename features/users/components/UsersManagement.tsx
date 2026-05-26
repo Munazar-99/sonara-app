@@ -12,6 +12,7 @@ import { EditUserDialog } from './EditUserDialog';
 import { UserDetailsDialog } from './UserDetailsDialog';
 import { useUpdateUser } from '../hooks/useUpdateUser';
 import { useAddUser } from '../hooks/useAddUser';
+import { useResendInvite } from '../hooks/useResendInvite';
 
 interface UsersManagementClientProps {
   initialUsers: User[];
@@ -24,6 +25,7 @@ export function UsersManagement({ initialUsers }: UsersManagementClientProps) {
   const [showAddUser, setShowAddUser] = useState(false);
   const { mutate: updateUser, isPending: isUpdatePending } = useUpdateUser();
   const { mutate: addUser, isPending: isAddPending } = useAddUser();
+  const { mutate: resendInvite } = useResendInvite();
 
   const handleViewDetails = (user: User) => {
     setSelectedUser(user);
@@ -93,8 +95,7 @@ export function UsersManagement({ initialUsers }: UsersManagementClientProps) {
   };
 
   const handleResendInvite = (user: User) => {
-    // In a real application, this would trigger an API call to resend the invitation
-    console.log('Resending invitation to:', user.email);
+    resendInvite(user.id);
   };
 
   const handleSuspendUser = (user: User) => {

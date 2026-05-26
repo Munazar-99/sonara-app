@@ -16,7 +16,7 @@ export async function requestPasswordReset(email: string): Promise<void> {
   const user = await getUserByEmail(email);
 
   // Prevent user enumeration
-  if (!user) {
+  if (!user || user.status !== 'active' || !user.passwordHash) {
     await fakeDelay();
     return;
   }
@@ -55,7 +55,15 @@ export async function requestPasswordReset(email: string): Promise<void> {
     });
   });
 
-  await sendResetLinkEmail(user.email, rawToken, user.name ?? '');
+  const emailResult = await sendResetLinkEmail(
+    user.email,
+    rawToken,
+    user.name ?? '',
+  );
+
+  if (!emailResult.success) {
+    throw new Error(emailResult.message);
+  }
 }
 
 async function fakeDelay(): Promise<void> {

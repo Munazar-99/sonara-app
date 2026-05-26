@@ -4,10 +4,7 @@ import { z } from 'zod';
 
 import { passwordSchema } from '../../utils/zod/schema';
 
-import { createUserSession } from '@/server/db/auth/createUserSession';
-
-import { generateSessionToken } from '@/utils/auth/generateSessionToken';
-import { setSessionTokenCookie } from '@/utils/auth/setSessionTokenCookie';
+import { setSession } from '@/utils/auth/setSession';
 import { mapResetError } from '../../utils/helpers';
 import { setNewPassword } from '../db/setNewPassword';
 
@@ -43,6 +40,7 @@ export async function setPasswordAction(
     const result = await setNewPassword({
       token,
       password: parsed.data.newPassword,
+      expectedType: 'PASSWORD_RESET',
     });
 
     if (!result.success) {
@@ -52,18 +50,7 @@ export async function setPasswordAction(
       };
     }
 
-    // Generate a session token
-    const sessionToken = generateSessionToken();
-
-    // Create a new user session in the database
-    const session = await createUserSession(
-      sessionToken,
-      result.userId,
-      result.apiKey,
-    );
-
-    // Set the session token in a cookie
-    await setSessionTokenCookie(sessionToken, session.expiresAt);
+    await setSession(result.userId, result.apiKey);
 
     // Return a success object
     return {

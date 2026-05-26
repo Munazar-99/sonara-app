@@ -5,25 +5,28 @@ import { redis } from '@/lib/upstash/upstash';
 import { headers } from 'next/headers';
 import { signInSchema } from '../../utils/zod/schema';
 import { getUserByEmail } from '@/server/db/auth/getUserByEmail';
-import { generateSessionToken } from '@/utils/auth/generateSessionToken';
-import { setSessionTokenCookie } from '@/utils/auth/setSessionTokenCookie';
-import { createUserSession } from '@/server/db/auth/createUserSession';
 import { verifyPassword } from '@/utils/auth/hashPassword';
-import { invalidateSession } from '@/server/db/auth/invalidateSession';
+import { setSession } from '@/utils/auth/setSession';
 
 const rateLimit = new Ratelimit({
   redis,
   limiter: Ratelimit.slidingWindow(10, '60s'),
 });
 
+const emailRateLimit = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, '300s'),
+});
+
 export async function loginAction(
   formData: unknown,
 ): Promise<{ error?: string; success?: boolean }> {
   try {
-    const ip = (await headers()).get('x-forwarded-for') ?? 'unknown-ip';
+    const forwardedFor = (await headers()).get('x-forwarded-for');
+    const ip = forwardedFor?.split(',')[0]?.trim() ?? 'unknown-ip';
     const { success: isAllowed } = await rateLimit.limit(ip);
     if (!isAllowed) {
-      return { error: 'Too many requests. Please wait a minutes.' };
+      return { error: 'Too many requests. Please wait a minute.' };
     }
 
     // Validate input safely
@@ -33,6 +36,14 @@ export async function loginAction(
     }
 
     const { email, password } = parsedData.data;
+    const { success: isEmailAllowed } = await emailRateLimit.limit(
+      `login:${email}`,
+    );
+
+    if (!isEmailAllowed) {
+      return { error: 'Too many requests. Please wait a few minutes.' };
+    }
+
     const existingUser = await getUserByEmail(email);
     const invalidCredentials = {
       error: 'Invalid credentials. Please try again.',
@@ -53,20 +64,7 @@ export async function loginAction(
       return invalidCredentials;
     }
 
-    const token = generateSessionToken();
-    const session = await createUserSession(
-      token,
-      existingUser.id,
-      existingUser.apiKey,
-    );
-
-    try {
-      await setSessionTokenCookie(token, session.expiresAt);
-    } catch (error) {
-      await invalidateSession(session.id, existingUser.id);
-
-      throw error;
-    }
+    await setSession(existingUser.id, existingUser.apiKey);
 
     return { success: true };
   } catch (error) {

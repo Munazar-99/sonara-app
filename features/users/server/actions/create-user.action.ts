@@ -34,7 +34,11 @@ export async function createUserAction(formData: AddUserFormValues) {
     );
 
     if (!emailResult.success) {
-      console.error('Failed to send invitation email');
+      return {
+        data: result.user,
+        success: false,
+        message: 'User created, but invitation email failed.',
+      };
     }
 
     return {

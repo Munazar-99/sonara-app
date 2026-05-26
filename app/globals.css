@@ -8,58 +8,58 @@ body {
 
 @layer base {
   :root {
-    --background: 240 33% 98%; 
-    --foreground: 225 28% 13%; 
-    --card: 0 0% 100%; 
-    --card-foreground: 225 28% 13%; 
-    --popover: 0 0% 100%; 
-    --popover-foreground: 225 28% 13%; 
-    --primary: 224 91% 63%; 
-    --primary-foreground: 0 0% 100%; 
-    --secondary: 220 14% 96%; 
-    --secondary-foreground: 225 28% 13%; 
-    --muted: 220 14% 96%; 
-    --muted-foreground: 220 13% 55%; 
-    --accent: 220 14% 96%; 
-    --accent-foreground: 225 28% 13%; 
-    --destructive: 0 84% 60%; 
-    --destructive-foreground: 0 0% 98%; 
-    --border: 220 14% 96%; 
-    --input: 220 14% 96%; 
-    --ring: 224 91% 63%; 
-    --chart-1: 39 96% 62%; 
-    --chart-2: 224 91% 63%; 
-    --chart-3: 220 13% 55%; 
-    --chart-4: 225 28% 13%; 
-    --chart-5: 220 23% 15%; 
+    --background: 240 33% 98%;
+    --foreground: 225 28% 13%;
+    --card: 0 0% 100%;
+    --card-foreground: 225 28% 13%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 225 28% 13%;
+    --primary: 224 91% 63%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 225 28% 13%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 13% 55%;
+    --accent: 220 14% 96%;
+    --accent-foreground: 225 28% 13%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 14% 96%;
+    --input: 220 14% 96%;
+    --ring: 224 91% 63%;
+    --chart-1: 39 96% 62%;
+    --chart-2: 224 91% 63%;
+    --chart-3: 220 13% 55%;
+    --chart-4: 225 28% 13%;
+    --chart-5: 220 23% 15%;
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 222 18% 11%; 
-    --foreground: 0 0% 100%; 
-    --card: 222 18% 11%; 
-    --card-foreground: 0 0% 100%; 
-    --popover: 222 18% 11%; 
-    --popover-foreground: 0 0% 100%; 
-    --primary: 224 91% 63%; 
-    --primary-foreground: 0 0% 100%; 
-    --secondary: 223 17% 20%; 
-    --secondary-foreground: 0 0% 100%; 
-    --muted: 223 17% 20%; 
-    --muted-foreground: 215 14% 64%; 
-    --accent: 223 17% 20%; 
-    --accent-foreground: 0 0% 100%; 
-    --destructive: 0 63% 31%; 
-    --destructive-foreground: 0 0% 98%; 
-    --border: 220 9% 24%; 
-    --input: 220 9% 24%; 
-    --ring: 224 91% 63%; 
-    --chart-1: 39 96% 62%; 
-    --chart-2: 224 91% 63%; 
-    --chart-3: 215 14% 64%; 
-    --chart-4: 0 0% 100%; 
-    --chart-5: 220 23% 15%; 
+    --background: 222 18% 11%;
+    --foreground: 0 0% 100%;
+    --card: 222 18% 11%;
+    --card-foreground: 0 0% 100%;
+    --popover: 222 18% 11%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 224 91% 63%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 223 17% 20%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 223 17% 20%;
+    --muted-foreground: 215 14% 64%;
+    --accent: 223 17% 20%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 9% 24%;
+    --input: 220 9% 24%;
+    --ring: 224 91% 63%;
+    --chart-1: 39 96% 62%;
+    --chart-2: 224 91% 63%;
+    --chart-3: 215 14% 64%;
+    --chart-4: 0 0% 100%;
+    --chart-5: 220 23% 15%;
   }
 }
 
@@ -77,10 +77,21 @@ body {
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   input:-webkit-autofill:active {
-    background-color: dark !important;
-    -webkit-text-fill-color: black !important;
-    border: 1px solid rgb(227 232 239);
+    -webkit-box-shadow: 0 0 0 1000px rgb(248 250 252) inset !important;
+    -webkit-text-fill-color: rgb(15 23 42) !important;
+    caret-color: rgb(15 23 42);
+    border-color: rgb(226 232 240) !important;
     transition: background-color 5000s ease-in-out 0s;
+  }
+
+  .dark input:-webkit-autofill,
+  .dark input:-webkit-autofill:hover,
+  .dark input:-webkit-autofill:focus,
+  .dark input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.06) inset !important;
+    -webkit-text-fill-color: rgb(255 255 255) !important;
+    caret-color: rgb(255 255 255);
+    border-color: rgba(255, 255, 255, 0.1) !important;
   }
 }
 
@@ -145,17 +156,39 @@ body {
   animation: testimonialIn 0.6s ease-out forwards;
 }
 
-.animate-delay-100 { animation-delay: 100ms; }
-.animate-delay-200 { animation-delay: 200ms; }
-.animate-delay-300 { animation-delay: 300ms; }
-.animate-delay-400 { animation-delay: 400ms; }
-.animate-delay-500 { animation-delay: 500ms; }
-.animate-delay-600 { animation-delay: 600ms; }
-.animate-delay-700 { animation-delay: 700ms; }
-.animate-delay-800 { animation-delay: 800ms; }
-.animate-delay-900 { animation-delay: 900ms; }
-.animate-delay-1000 { animation-delay: 1000ms; }
-.animate-delay-1200 { animation-delay: 1200ms; }
-.animate-delay-1400 { animation-delay: 1400ms; }
-
-
+.animate-delay-100 {
+  animation-delay: 100ms;
+}
+.animate-delay-200 {
+  animation-delay: 200ms;
+}
+.animate-delay-300 {
+  animation-delay: 300ms;
+}
+.animate-delay-400 {
+  animation-delay: 400ms;
+}
+.animate-delay-500 {
+  animation-delay: 500ms;
+}
+.animate-delay-600 {
+  animation-delay: 600ms;
+}
+.animate-delay-700 {
+  animation-delay: 700ms;
+}
+.animate-delay-800 {
+  animation-delay: 800ms;
+}
+.animate-delay-900 {
+  animation-delay: 900ms;
+}
+.animate-delay-1000 {
+  animation-delay: 1000ms;
+}
+.animate-delay-1200 {
+  animation-delay: 1200ms;
+}
+.animate-delay-1400 {
+  animation-delay: 1400ms;
+}

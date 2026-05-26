@@ -8,7 +8,7 @@ export const userStatusSchema = z.enum(['active', 'pending', 'suspended']);
 export const userSchema = z.object({
   id: z.string(),
   name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Invalid email address'),
+  email: z.string().trim().toLowerCase().email('Invalid email address'),
   status: userStatusSchema,
   role: userRoleSchema,
   minutesUsed: z.number().nonnegative(),
@@ -21,7 +21,7 @@ export const userSchema = z.object({
 
 export const addUserSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Invalid email address'),
+  email: z.string().trim().toLowerCase().email('Invalid email address'),
   role: userRoleSchema,
   billingRate: z.number().nonnegative(),
   sendInvite: z.boolean().default(true),
@@ -30,7 +30,7 @@ export const addUserSchema = z.object({
 
 export const editUserSchema = z.object({
   name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Invalid email address'),
+  email: z.string().trim().toLowerCase().email('Invalid email address'),
   role: userRoleSchema,
   apiKey: z.string().min(1, 'API Key is required'),
   status: userStatusSchema,
@@ -43,7 +43,7 @@ export type EditUserFormValues = z.infer<typeof editUserSchema>;
 export const updateUserSchema = z.object({
   id: z.string().min(1, 'User ID is required'),
   name: z.string().min(1, 'Name is required').optional(),
-  email: z.string().email('Invalid email').optional(),
+  email: z.string().trim().toLowerCase().email('Invalid email').optional(),
   role: z.nativeEnum(UserRole).optional(),
   billingRate: z.coerce
     .number()

@@ -1,5 +1,6 @@
 import InvitationEmail from '@/components/email/Invite';
 import { resend } from '@/lib/resend/resend';
+import { getAppUrl } from '@/utils/url/getAppUrl';
 
 export const sendInvitationEmail = async (
   email: string,
@@ -13,7 +14,7 @@ export const sendInvitationEmail = async (
     react: InvitationEmail({
       name,
       email,
-      createPasswordLink: `http://localhost:3000/complete-signup/${token}`,
+      createPasswordLink: `${getAppUrl()}/complete-signup/${token}`,
     }),
   });
 
