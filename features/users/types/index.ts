@@ -1,6 +1,6 @@
 import { UserRole, UserStatus } from '@prisma/client';
 
-export type BillingRate = 0.5 | 1 | 2 | 5;
+export type BillingRate = number;
 
 export interface User {
   id: string;
@@ -12,6 +12,13 @@ export interface User {
   lastActive: string | null;
   apiKey?: string;
   billingRate: BillingRate;
+  currentMonthUsage: {
+    totalCalls: number;
+    totalDurationSec: number;
+    totalProviderCost: number;
+    totalCustomerCost: number;
+    totalProfit: number;
+  };
 }
 
 export interface UserFormData {

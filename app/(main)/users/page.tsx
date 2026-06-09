@@ -4,9 +4,7 @@ import { fetchAllUsersAction } from '@/features/users/server/actions/get-all-use
 import { User } from '@/features/users/types';
 
 export default async function UsersPage() {
-  // Fetch users from the data layer
-  // const users = await getUsers();
-  const allUsers = (await fetchAllUsersAction()) as User[];
+  const allUsers = (await fetchAllUsersAction()) satisfies User[];
 
   return (
     <ContentLayout title="Users">

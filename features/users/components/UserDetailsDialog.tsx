@@ -10,7 +10,6 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import {
   Mail,
@@ -21,50 +20,78 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import { User } from '../types';
-import { formatDate, timeAgo } from '../utils';
+import {
+  formatCurrency,
+  formatDate,
+  getStatusBadgeStyles,
+  timeAgo,
+} from '../utils';
+import {
+  dialogContentClass,
+  dialogDescriptionClass,
+  dialogFooterClass,
+  dialogHeaderClass,
+  dialogIconClass,
+  dialogMutedPanelClass,
+  dialogPanelClass,
+  dialogTitleClass,
+  secondaryButtonClass,
+} from './user-dialog-styles';
 
 interface UserDetailsDialogProps {
   user: User;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onResendInvite: (user: User) => void;
 }
 
 export function UserDetailsDialog({
   user,
   open,
   onOpenChange,
+  onResendInvite,
 }: UserDetailsDialogProps) {
   if (!user) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto p-0 sm:max-w-[600px]">
-        <DialogHeader className="px-6 pb-2 pt-6">
-          <div className="flex items-start justify-between">
+      <DialogContent
+        className={`${dialogContentClass} max-h-[90vh] overflow-y-auto sm:max-w-[680px]`}
+      >
+        <DialogHeader className={dialogHeaderClass}>
+          <div className="flex items-start gap-3">
+            <div className={dialogIconClass}>
+              <UserIcon className="h-5 w-5" />
+            </div>
             <div>
-              <DialogTitle className="text-xl font-semibold tracking-tight">
-                User Profile
+              <DialogTitle className={dialogTitleClass}>
+                User profile
               </DialogTitle>
-              <DialogDescription className="mt-1 text-sm">
-                View and manage user details and settings
+              <DialogDescription className={dialogDescriptionClass}>
+                Review account state, access level, and current-month usage.
               </DialogDescription>
             </div>
           </div>
         </DialogHeader>
-        <div className="mt-0 space-y-5 px-6 pb-6">
-          <div className="rounded-lg border bg-muted/30 p-4">
+        <div className="space-y-5 px-6 py-5">
+          <div className={dialogMutedPanelClass}>
             <div className="flex flex-col justify-between gap-4 md:flex-row">
               <div className="space-y-1">
-                <h2 className="text-xl font-semibold">{user.name}</h2>
-                <div className="flex items-center gap-2 text-muted-foreground">
+                <h2 className="text-xl font-semibold text-slate-950 dark:text-white">
+                  {user.name}
+                </h2>
+                <div className="flex items-center gap-2 text-slate-500 dark:text-slate-400">
                   <Mail className="h-4 w-4" />
                   <span className="text-sm">{user.email}</span>
                 </div>
               </div>
-              <div className="flex flex-col items-start gap-1 md:items-end">
+              <div className="flex flex-wrap items-start gap-2 md:justify-end">
+                <Badge className={getStatusBadgeStyles(user.status)}>
+                  {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+                </Badge>
                 <Badge
                   variant="outline"
-                  className="flex items-center gap-1.5 font-normal"
+                  className="flex items-center gap-1.5 border-slate-200 bg-white font-normal text-slate-700 dark:border-white/10 dark:bg-[#18202f] dark:text-slate-300"
                 >
                   {user.role === 'admin' ? (
                     <>
@@ -83,97 +110,105 @@ export function UserDetailsDialog({
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <Card>
-              <CardContent className="space-y-3 p-4">
-                <h3 className="flex items-center gap-2 text-sm font-medium">
-                  <Calendar className="h-4 w-4 text-slate-500" />
+            <div className={dialogPanelClass}>
+              <div className="space-y-3">
+                <h3 className="flex items-center gap-2 text-sm font-medium text-slate-950 dark:text-white">
+                  <Calendar className="h-4 w-4 text-primary" />
                   Account Information
                 </h3>
                 <Separator />
                 <div className="grid grid-cols-2 gap-y-2">
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-slate-500 dark:text-slate-400">
                     Member Since
                   </div>
-                  <div className="text-sm font-medium">
+                  <div className="text-sm font-medium text-slate-950 dark:text-white">
                     {formatDate(user.createdAt)}
                   </div>
 
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-slate-500 dark:text-slate-400">
                     Last Active
                   </div>
-                  <div className="text-sm font-medium">
+                  <div className="text-sm font-medium text-slate-950 dark:text-white">
                     {user.lastActive ? timeAgo(new Date(user.lastActive)) : '-'}
                   </div>
 
-                  <div className="text-sm text-muted-foreground">Status</div>
-                  <div className="text-sm font-medium">
+                  <div className="text-sm text-slate-500 dark:text-slate-400">
+                    Status
+                  </div>
+                  <div className="text-sm font-medium text-slate-950 dark:text-white">
                     {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            <Card>
-              <CardContent className="space-y-3 p-4">
-                <h3 className="flex items-center gap-2 text-sm font-medium">
-                  <BarChart3 className="h-4 w-4 text-slate-500" />
+            <div className={dialogPanelClass}>
+              <div className="space-y-3">
+                <h3 className="flex items-center gap-2 text-sm font-medium text-slate-950 dark:text-white">
+                  <BarChart3 className="h-4 w-4 text-primary" />
                   Usage Summary
                 </h3>
                 <Separator />
                 <div className="grid grid-cols-2 gap-y-2">
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-slate-500 dark:text-slate-400">
                     Minutes Used
                   </div>
-                  {/* <div className="text-sm font-medium">{user.minutesUsed}</div> */}
+                  <div className="text-sm font-medium text-slate-950 dark:text-white">
+                    {Math.round(
+                      user.currentMonthUsage.totalDurationSec / 60,
+                    ).toLocaleString()}
+                  </div>
 
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-slate-500 dark:text-slate-400">
                     Calls Made
                   </div>
-                  {/* <div className="text-sm font-medium">{user.callsMade}</div> */}
+                  <div className="text-sm font-medium text-slate-950 dark:text-white">
+                    {user.currentMonthUsage.totalCalls.toLocaleString()}
+                  </div>
 
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-slate-500 dark:text-slate-400">
                     Current Spend
                   </div>
-                  <div className="text-sm font-medium">
-                    {/* {formatCurrency(user.currentSpend)} */}
+                  <div className="text-sm font-medium text-slate-950 dark:text-white">
+                    {formatCurrency(user.currentMonthUsage.totalCustomerCost)}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
 
           {user.status === 'pending' && (
-            <Card className="border-amber-200 bg-amber-50">
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <div className="rounded-full bg-amber-100 p-1.5">
-                    <AlertTriangle className="h-4 w-4 text-amber-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-amber-800">
-                      Invitation Pending
-                    </h3>
-                    <p className="mt-1 text-sm text-amber-700">
-                      This user has not yet accepted their invitation sent{' '}
-                      {timeAgo(new Date(user.createdAt))}.
-                    </p>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mt-2 h-8 border-amber-200 bg-amber-50 text-amber-600 hover:bg-amber-100"
-                    >
-                      Resend Invitation
-                    </Button>
-                  </div>
+            <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-400/20 dark:bg-amber-400/10">
+              <div className="flex items-start gap-3">
+                <div className="rounded-lg bg-amber-100 p-2 dark:bg-amber-400/15">
+                  <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-300" />
                 </div>
-              </CardContent>
-            </Card>
+                <div>
+                  <h3 className="font-medium text-amber-900 dark:text-amber-200">
+                    Invitation pending
+                  </h3>
+                  <p className="mt-1 text-sm text-amber-800 dark:text-amber-300">
+                    This user has not yet accepted their invitation sent{' '}
+                    {timeAgo(new Date(user.createdAt))}.
+                  </p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-3 h-8 rounded-lg border-amber-200 bg-white text-amber-700 hover:bg-amber-100 dark:border-amber-400/20 dark:bg-[#111827] dark:text-amber-200 dark:hover:bg-amber-400/15"
+                    onClick={() => onResendInvite(user)}
+                  >
+                    Resend invitation
+                  </Button>
+                </div>
+              </div>
+            </div>
           )}
         </div>
 
-        <DialogFooter className="flex justify-center border-t px-6 py-4">
+        <DialogFooter className={dialogFooterClass}>
           <Button
-            className="w-full sm:w-[200px]"
+            variant="outline"
+            className={`${secondaryButtonClass} w-full sm:w-auto`}
             onClick={() => onOpenChange(false)}
           >
             Close

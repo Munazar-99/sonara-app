@@ -15,11 +15,11 @@ export function formatDate(dateString: string): string {
 export function getStatusBadgeStyles(status: UserStatus) {
   switch (status) {
     case 'active':
-      return 'bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 border-0';
+      return 'border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-50 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-300';
     case 'pending':
-      return 'bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 border-0';
+      return 'border border-amber-200 bg-amber-50 text-amber-700 hover:bg-amber-50 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-300';
     case 'suspended':
-      return 'bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 border-0';
+      return 'border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-50 dark:border-rose-400/20 dark:bg-rose-400/10 dark:text-rose-300';
     default:
       return '';
   }

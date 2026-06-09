@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { UserPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { BillingRate, User } from '../types';
 import { AddUserFormValues, EditUserFormValues } from '../utils/schema';
 import { UserTable } from './UserTable';
@@ -13,6 +12,9 @@ import { UserDetailsDialog } from './UserDetailsDialog';
 import { useUpdateUser } from '../hooks/useUpdateUser';
 import { useAddUser } from '../hooks/useAddUser';
 import { useResendInvite } from '../hooks/useResendInvite';
+import { useUpdateUserStatus } from '../hooks/useUpdateUserStatus';
+import { UserStatus } from '@prisma/client';
+import { UsersMetricGrid } from './UsersMetricGrid';
 
 interface UsersManagementClientProps {
   initialUsers: User[];
@@ -26,6 +28,7 @@ export function UsersManagement({ initialUsers }: UsersManagementClientProps) {
   const { mutate: updateUser, isPending: isUpdatePending } = useUpdateUser();
   const { mutate: addUser, isPending: isAddPending } = useAddUser();
   const { mutate: resendInvite } = useResendInvite();
+  const { mutate: updateUserStatus } = useUpdateUserStatus();
 
   const handleViewDetails = (user: User) => {
     setSelectedUser(user);
@@ -51,6 +54,13 @@ export function UsersManagement({ initialUsers }: UsersManagementClientProps) {
             lastActive: res.data.lastActive?.toISOString() || null,
 
             billingRate: Number(res.data.billingRate) as BillingRate,
+            currentMonthUsage: {
+              totalCalls: 0,
+              totalDurationSec: 0,
+              totalProviderCost: 0,
+              totalCustomerCost: 0,
+              totalProfit: 0,
+            },
           };
 
           setUsers(prev => [...prev, createdUser]);
@@ -81,7 +91,11 @@ export function UsersManagement({ initialUsers }: UsersManagementClientProps) {
         setUsers(prevUsers =>
           prevUsers.map(u =>
             u.id === user.id
-              ? { ...u, ...formData, billingRate: u.billingRate }
+              ? {
+                  ...u,
+                  ...formData,
+                  billingRate: formData.billingRate as BillingRate,
+                }
               : u,
           ),
         );
@@ -99,55 +113,74 @@ export function UsersManagement({ initialUsers }: UsersManagementClientProps) {
   };
 
   const handleSuspendUser = (user: User) => {
-    setUsers(prevUsers =>
-      prevUsers.map(u =>
-        u.id === user.id ? { ...u, status: 'suspended' } : u,
-      ),
-    );
+    updateStatus(user, 'suspended');
   };
 
   const handleReactivateUser = (user: User) => {
+    updateStatus(user, 'active');
+  };
+
+  const updateStatus = (user: User, status: UserStatus) => {
     setUsers(prevUsers =>
-      prevUsers.map(u => (u.id === user.id ? { ...u, status: 'active' } : u)),
+      prevUsers.map(u => (u.id === user.id ? { ...u, status } : u)),
+    );
+
+    updateUserStatus(
+      {
+        id: user.id,
+        status,
+      },
+      {
+        onError: () => {
+          setUsers(prevUsers =>
+            prevUsers.map(u =>
+              u.id === user.id ? { ...u, status: user.status } : u,
+            ),
+          );
+        },
+      },
     );
   };
 
   return (
-    <div className="container mx-auto space-y-6 px-4 py-6 md:px-6">
-      <div className="mb-8 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+    <div className="min-h-[calc(100vh-5rem)] space-y-6">
+      <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Users</h1>
-          <p className="mt-1 text-muted-foreground">
-            Manage your organization&#39;s users
+          <p className="text-sm font-medium text-primary">Team management</p>
+          <h1 className="mt-2 text-2xl font-semibold tracking-normal text-slate-950 dark:text-white">
+            Users
+          </h1>
+          <p className="mt-1 max-w-2xl text-sm text-slate-500 dark:text-slate-400">
+            Manage access, invitation state, and current-month usage for your
+            workspace.
           </p>
         </div>
         <Button
           onClick={() => setShowAddUser(true)}
-          className="w-full shadow-sm md:w-auto"
+          className="h-10 w-full rounded-lg bg-primary text-white shadow-sm hover:bg-primary/90 md:w-auto"
         >
           <UserPlus className="mr-2 h-4 w-4" />
           Add User
         </Button>
       </div>
 
-      <Card className="overflow-hidden border-none bg-white shadow-sm dark:bg-gray-dark">
-        <CardContent className="p-0">
-          <UserTable
-            users={users}
-            onViewDetails={handleViewDetails}
-            onEditUser={handleEditUser}
-            onResendInvite={handleResendInvite}
-            onSuspendUser={handleSuspendUser}
-            onReactivateUser={handleReactivateUser}
-          />
-        </CardContent>
-      </Card>
+      <UsersMetricGrid users={users} />
+
+      <UserTable
+        users={users}
+        onViewDetails={handleViewDetails}
+        onEditUser={handleEditUser}
+        onResendInvite={handleResendInvite}
+        onSuspendUser={handleSuspendUser}
+        onReactivateUser={handleReactivateUser}
+      />
 
       {selectedUser && (
         <UserDetailsDialog
           user={selectedUser}
           open={!!selectedUser}
           onOpenChange={() => setSelectedUser(null)}
+          onResendInvite={handleResendInvite}
         />
       )}
 

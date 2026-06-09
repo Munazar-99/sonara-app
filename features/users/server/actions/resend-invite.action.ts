@@ -6,11 +6,17 @@ import { AUTH_TOKEN_TYPE } from '@/utils/constants/auth/constants';
 import { sha256 } from '@oslojs/crypto/sha2';
 import { encodeHexLowerCase } from '@oslojs/encoding';
 import { sendInvitationEmail } from '../email/sendInvitationEmail';
+import {
+  mapAuthorizationError,
+  requireUsersAdmin,
+} from '../auth/require-users-admin';
 
 const INVITE_TOKEN_TTL_MS = 1000 * 60 * 60 * 24;
 
 export async function resendInviteAction(userId: string) {
   try {
+    await requireUsersAdmin();
+
     const rawToken = generateToken();
     const tokenId = encodeHexLowerCase(
       sha256(new TextEncoder().encode(rawToken)),
@@ -87,10 +93,11 @@ export async function resendInviteAction(userId: string) {
     };
   } catch (error) {
     console.error('resendInviteAction:', error);
+    const authorizationError = mapAuthorizationError(error);
 
     return {
       success: false,
-      message: 'Failed to resend invitation.',
+      message: authorizationError ?? 'Failed to resend invitation.',
     };
   }
 }

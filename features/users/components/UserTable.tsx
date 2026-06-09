@@ -1,28 +1,15 @@
 'use client';
 
-import {
-  MoreHorizontal,
-  Search,
-  ArrowUpDown,
-  Eye,
-  Pencil,
-  RefreshCw,
-  Ban,
-  CheckCircle2,
-  Filter,
-} from 'lucide-react';
-import { useState, useMemo } from 'react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { Filter, Search } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -31,25 +18,29 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { User } from '../types';
-import { getStatusBadgeStyles } from '../utils';
-import { UserStatus } from '@prisma/client';
+import {
+  getSortValue,
+  LastActiveCell,
+  MoneyCell,
+  RoleBadge,
+  SortableHead,
+  StatusBadge,
+  UsageCell,
+  UserCell,
+  userColumnWidths,
+  userTableMinWidth,
+} from './UserTableColumns';
+import {
+  SortDirection,
+  UserSortField,
+  UserTableActionHandlers,
+} from './user-table-types';
+import { UserTableActions } from './UserTableActions';
 
-interface UserTableProps {
+type UserTableProps = UserTableActionHandlers & {
   users: User[];
-  onViewDetails: (user: User) => void;
-  onEditUser: (user: User) => void;
-  onResendInvite?: (user: User) => void;
-  onSuspendUser?: (user: User) => void;
-  onReactivateUser?: (user: User) => void;
-}
+};
 
 export function UserTable({
   users,
@@ -60,17 +51,19 @@ export function UserTable({
   onReactivateUser,
 }: UserTableProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortField, setSortField] = useState<keyof User>('name');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [sortField, setSortField] = useState<UserSortField>('name');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [roleFilter, setRoleFilter] = useState<string>('all');
 
-  // Filter users based on search, status, and role
   const filteredUsers = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+
     return users.filter(user => {
       const matchesSearch =
-        (user.name?.toLowerCase() ?? '').includes(searchQuery.toLowerCase()) ||
-        (user.email?.toLowerCase() ?? '').includes(searchQuery.toLowerCase());
+        query.length === 0 ||
+        user.name.toLowerCase().includes(query) ||
+        user.email.toLowerCase().includes(query);
 
       const matchesStatus =
         statusFilter === 'all' || user.status === statusFilter;
@@ -80,93 +73,83 @@ export function UserTable({
     });
   }, [users, searchQuery, statusFilter, roleFilter]);
 
-  // Sort users
   const sortedUsers = useMemo(() => {
     return [...filteredUsers].sort((a, b) => {
-      const aValue = a[sortField];
-      const bValue = b[sortField];
-
-      if (typeof aValue === 'string' && typeof bValue === 'string') {
-        return sortDirection === 'asc'
-          ? aValue.localeCompare(bValue)
-          : bValue.localeCompare(aValue);
-      }
+      const aValue = getSortValue(a, sortField);
+      const bValue = getSortValue(b, sortField);
 
       if (typeof aValue === 'number' && typeof bValue === 'number') {
         return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
       }
 
-      return 0;
+      const comparison = String(aValue).localeCompare(String(bValue));
+      return sortDirection === 'asc' ? comparison : -comparison;
     });
   }, [filteredUsers, sortField, sortDirection]);
 
-  const handleSort = (field: keyof User) => {
+  const uniqueStatuses = useMemo(
+    () => Array.from(new Set(users.map(user => user.status))),
+    [users],
+  );
+
+  const uniqueRoles = useMemo(
+    () => Array.from(new Set(users.map(user => user.role))),
+    [users],
+  );
+
+  const handleSort = (field: UserSortField) => {
     if (sortField === field) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortDirection('asc');
+      return;
     }
+
+    setSortField(field);
+    setSortDirection('asc');
   };
-
-  const getStatusBadge = (status: UserStatus) => {
-    return (
-      <Badge className={getStatusBadgeStyles(status)}>
-        {status.charAt(0).toUpperCase() + status.slice(1)}
-      </Badge>
-    );
-  };
-
-  // Get unique statuses and roles for filters
-  const uniqueStatuses = useMemo(() => {
-    return Array.from(new Set(users.map(user => user.status)));
-  }, [users]);
-
-  const uniqueRoles = useMemo(() => {
-    return Array.from(new Set(users.map(user => user.role)));
-  }, [users]);
 
   return (
-    <div className="space-y-4 p-4 md:p-6">
-      <div className="mb-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
-        <div className="relative w-full sm:max-w-xs">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+    <section className="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm dark:border-white/10 dark:bg-[#18202f]">
+      <div className="flex flex-col gap-3 border-b border-slate-200/80 bg-white p-3 dark:border-white/10 dark:bg-[#18202f] lg:flex-row lg:items-center lg:justify-between">
+        <div className="relative w-full lg:max-w-sm">
+          <Search className="absolute left-3 top-1/2 z-10 h-4 w-4 -translate-y-1/2 text-dark dark:text-white" />
           <Input
-            placeholder="Search..."
-            className="h-9 w-full border-muted bg-background pl-9"
+            placeholder="Search users by name or email"
+            className="h-10 rounded-lg border-slate-200 bg-slate-50 pl-9 text-slate-950 shadow-none focus-visible:ring-primary/30 dark:border-white/10 dark:bg-[#111827] dark:text-white dark:placeholder:text-slate-500"
             value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
+            onChange={event => setSearchQuery(event.target.value)}
           />
         </div>
-        <div className="flex w-full items-center gap-2 sm:w-auto">
+
+        <div className="flex flex-col gap-2 sm:flex-row">
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full border-muted bg-background sm:w-[130px]">
+            <SelectTrigger className="h-10 rounded-lg border-slate-200 bg-slate-50 text-slate-700 shadow-none focus:ring-primary/30 dark:border-white/10 dark:bg-[#111827] dark:text-slate-200 sm:w-[150px]">
               <div className="flex items-center gap-2">
                 <Filter className="h-4 w-4" />
                 <SelectValue placeholder="Status" />
               </div>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Status</SelectItem>
+              <SelectItem value="all">All statuses</SelectItem>
               {uniqueStatuses.map(status => (
                 <SelectItem key={status} value={status}>
-                  {status.charAt(0).toUpperCase() + status.slice(1)}
+                  {formatLabel(status)}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
+
           <Select value={roleFilter} onValueChange={setRoleFilter}>
-            <SelectTrigger className="w-full border-muted bg-background sm:w-[130px]">
+            <SelectTrigger className="h-10 rounded-lg border-slate-200 bg-slate-50 text-slate-700 shadow-none focus:ring-primary/30 dark:border-white/10 dark:bg-[#111827] dark:text-slate-200 sm:w-[140px]">
               <div className="flex items-center gap-2">
                 <Filter className="h-4 w-4" />
                 <SelectValue placeholder="Role" />
               </div>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Roles</SelectItem>
+              <SelectItem value="all">All roles</SelectItem>
               {uniqueRoles.map(role => (
                 <SelectItem key={role} value={role}>
-                  {role.charAt(0).toUpperCase() + role.slice(1)}
+                  {formatLabel(role)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -174,215 +157,158 @@ export function UserTable({
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-md border bg-white dark:bg-gray-dark">
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader className="min-w-full bg-gray-50 dark:bg-gray-dark/50">
-              <TableRow className="border-b border-gray-200 hover:bg-transparent dark:border-gray-700">
-                <TableHead className="w-[16.6%] font-medium">
-                  <Button
-                    variant="ghost"
-                    className="flex h-8 items-center p-0 font-medium"
-                    onClick={() => handleSort('name')}
-                  >
-                    Name
-                    {sortField === 'name' && (
-                      <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
-                    )}
-                  </Button>
-                </TableHead>
-                <TableHead className="hidden w-[16.6%] font-medium md:table-cell">
-                  <Button
-                    variant="ghost"
-                    className="flex h-8 items-center p-0 font-medium"
-                    onClick={() => handleSort('email')}
-                  >
-                    Email
-                    {sortField === 'email' && (
-                      <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
-                    )}
-                  </Button>
-                </TableHead>
-                <TableHead className="w-[16.6%] font-medium">
-                  <Button
-                    variant="ghost"
-                    className="flex h-8 items-center p-0 font-medium"
-                    onClick={() => handleSort('status')}
-                  >
-                    Status
-                    {sortField === 'status' && (
-                      <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
-                    )}
-                  </Button>
-                </TableHead>
-                <TableHead className="hidden w-[16.6%] font-medium md:table-cell">
-                  Role
-                </TableHead>
-                <TableHead className="hidden w-[16.6%] font-medium lg:table-cell">
-                  <Button
-                    variant="ghost"
-                    className="flex h-8 items-center p-0 font-medium"
-                    // onClick={() => handleSort('minutesUsed')}
-                  >
-                    Usage
-                    {/* {sortField === 'minutesUsed' && (
-                      <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
-                    )} */}
-                  </Button>
-                </TableHead>
-                <TableHead className="w-[16.6%] font-medium">
-                  <Button
-                    variant="ghost"
-                    className="flex h-8 items-center p-0 font-medium"
-                    // onClick={() => handleSort('currentSpend')}
-                  >
-                    Spend
-                    {/* {sortField === 'currentSpend' && (
-                      <ArrowUpDown className="ml-2 h-3.5 w-3.5" />
-                    )} */}
-                  </Button>
-                </TableHead>
-                <TableHead className="w-[80px] text-right font-medium">
-                  Actions
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sortedUsers.map(user => (
-                <TableRow
-                  key={user.id}
-                  className="cursor-pointer transition-colors hover:bg-muted/50"
-                  onClick={() => onViewDetails(user)}
+      <div className="overflow-x-auto">
+        <Table
+          className="table-fixed"
+          style={{
+            minWidth: userTableMinWidth,
+          }}
+        >
+          <colgroup>
+            {userColumnWidths.map((width, index) => (
+              <col key={index} style={{ width }} />
+            ))}
+          </colgroup>
+          <TableHeader>
+            <TableRow className="border-slate-200/80 bg-slate-50 hover:bg-slate-50 dark:border-white/10 dark:bg-[#111827] dark:hover:bg-[#111827]">
+              <TableHead className="px-4">
+                <SortableHead
+                  label="User"
+                  field="name"
+                  activeField={sortField}
+                  onSort={handleSort}
+                />
+              </TableHead>
+              <TableHead className="px-4">
+                <SortableHead
+                  label="Status"
+                  field="status"
+                  activeField={sortField}
+                  onSort={handleSort}
+                />
+              </TableHead>
+              <TableHead className="px-4">
+                <SortableHead
+                  label="Role"
+                  field="role"
+                  activeField={sortField}
+                  onSort={handleSort}
+                />
+              </TableHead>
+              <TableHead className="px-4 text-right">
+                <SortableHead
+                  label="Usage"
+                  field="totalDurationSec"
+                  activeField={sortField}
+                  onSort={handleSort}
+                  align="right"
+                />
+              </TableHead>
+              <TableHead className="px-4 text-right">
+                <SortableHead
+                  label="Spend"
+                  field="totalCustomerCost"
+                  activeField={sortField}
+                  onSort={handleSort}
+                  align="right"
+                />
+              </TableHead>
+              <TableHead className="px-4 text-right">
+                <SortableHead
+                  label="Profit"
+                  field="totalProfit"
+                  activeField={sortField}
+                  onSort={handleSort}
+                  align="right"
+                />
+              </TableHead>
+              <TableHead className="px-4">
+                <SortableHead
+                  label="Last active"
+                  field="lastActive"
+                  activeField={sortField}
+                  onSort={handleSort}
+                />
+              </TableHead>
+              <TableHead className="px-4 text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {sortedUsers.map(user => (
+              <TableRow
+                key={user.id}
+                className="cursor-pointer border-slate-100 hover:bg-slate-50/80 dark:border-white/10 dark:hover:bg-[#20293a]"
+                onClick={() => onViewDetails(user)}
+              >
+                <TableCell className="px-4 py-3">
+                  <UserCell user={user} />
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  <StatusBadge status={user.status} />
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  <RoleBadge user={user} />
+                </TableCell>
+                <TableCell className="px-4 py-3 text-right">
+                  <UsageCell user={user} />
+                </TableCell>
+                <TableCell className="px-4 py-3 text-right">
+                  <MoneyCell value={user.currentMonthUsage.totalCustomerCost} />
+                </TableCell>
+                <TableCell className="px-4 py-3 text-right">
+                  <MoneyCell value={user.currentMonthUsage.totalProfit} />
+                </TableCell>
+                <TableCell className="px-4 py-3">
+                  <LastActiveCell user={user} />
+                </TableCell>
+                <TableCell
+                  className="px-4 py-3 text-right"
+                  onClick={event => event.stopPropagation()}
                 >
-                  <TableCell className="w-[16.6%] font-medium">
-                    <div>
-                      {user.name}
-                      <div className="mt-1 text-xs text-muted-foreground md:hidden">
-                        {user.email}
-                      </div>
+                  <UserTableActions
+                    user={user}
+                    onViewDetails={onViewDetails}
+                    onEditUser={onEditUser}
+                    onResendInvite={onResendInvite}
+                    onSuspendUser={onSuspendUser}
+                    onReactivateUser={onReactivateUser}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+
+            {sortedUsers.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={8} className="h-40 text-center">
+                  <div className="mx-auto flex max-w-sm flex-col items-center justify-center">
+                    <div className="mb-3 rounded-lg bg-primary/10 p-3 text-primary dark:bg-primary/15">
+                      <Search className="h-5 w-5" />
                     </div>
-                  </TableCell>
-                  <TableCell className="hidden w-[16.6%] md:table-cell">
-                    {user.email}
-                  </TableCell>
-                  <TableCell className="w-[16.6%]">
-                    {getStatusBadge(user.status)}
-                  </TableCell>
-                  <TableCell className="hidden w-[16.6%] md:table-cell">
-                    <Badge variant="outline" className="font-normal">
-                      {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="hidden w-[16.6%] lg:table-cell">
-                    <div className="flex flex-col">
-                      {/* <span>{user.minutesUsed} min</span> */}
-                      <span className="text-xs text-muted-foreground">
-                        {/* {user.callsMade} calls */}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="w-[16.6%]">
-                    <div className="font-medium">
-                      {/* {formatCurrency(user.currentSpend)} */}
-                    </div>
-                  </TableCell>
-                  <TableCell className="w-[80px] text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger
-                        asChild
-                        onClick={e => e.stopPropagation()}
-                      >
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 p-0"
-                        >
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Open menu</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-[160px]">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          onClick={e => {
-                            e.stopPropagation();
-                            onViewDetails(user);
-                          }}
-                        >
-                          <Eye className="mr-2 h-4 w-4" />
-                          <span>View Details</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={e => {
-                            e.stopPropagation();
-                            onEditUser(user);
-                          }}
-                        >
-                          <Pencil className="mr-2 h-4 w-4" />
-                          <span>Edit User</span>
-                        </DropdownMenuItem>
-                        {user.status === 'pending' && onResendInvite && (
-                          <DropdownMenuItem
-                            onClick={e => {
-                              e.stopPropagation();
-                              onResendInvite(user);
-                            }}
-                          >
-                            <RefreshCw className="mr-2 h-4 w-4" />
-                            <span>Resend Invite</span>
-                          </DropdownMenuItem>
-                        )}
-                        <DropdownMenuSeparator />
-                        {user.status === 'active' && onSuspendUser ? (
-                          <DropdownMenuItem
-                            className="text-destructive focus:text-destructive"
-                            onClick={e => {
-                              e.stopPropagation();
-                              onSuspendUser(user);
-                            }}
-                          >
-                            <Ban className="mr-2 h-4 w-4" />
-                            <span>Suspend User</span>
-                          </DropdownMenuItem>
-                        ) : user.status === 'suspended' && onReactivateUser ? (
-                          <DropdownMenuItem
-                            onClick={e => {
-                              e.stopPropagation();
-                              onReactivateUser(user);
-                            }}
-                          >
-                            <CheckCircle2 className="mr-2 h-4 w-4" />
-                            <span>Reactivate User</span>
-                          </DropdownMenuItem>
-                        ) : null}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {sortedUsers.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={7} className="h-24 text-center">
-                    <div className="flex flex-col items-center justify-center text-muted-foreground">
-                      <p>No users found</p>
-                      <p className="text-sm">
-                        Try adjusting your search or filters
-                      </p>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+                    <p className="font-medium text-slate-950 dark:text-white">
+                      No users found
+                    </p>
+                    <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                      Try adjusting your search or filters.
+                    </p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
       </div>
 
-      <div className="flex items-center justify-between text-sm text-muted-foreground">
+      <div className="flex flex-col gap-2 border-t border-slate-200 px-4 py-3 text-sm text-slate-500 dark:border-white/10 dark:text-slate-400 sm:flex-row sm:items-center sm:justify-between">
         <p>
-          Showing {sortedUsers.length} of {users.length} users
+          Showing {sortedUsers.length.toLocaleString()} of{' '}
+          {users.length.toLocaleString()} users
         </p>
+        <p>Current month usage and spend</p>
       </div>
-    </div>
+    </section>
   );
+}
+
+function formatLabel(value: string) {
+  return value.charAt(0).toUpperCase() + value.slice(1);
 }

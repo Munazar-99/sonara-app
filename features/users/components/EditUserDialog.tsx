@@ -11,6 +11,13 @@ import { Pencil } from 'lucide-react';
 import { User } from '../types';
 import { EditUserFormValues } from '../utils/schema';
 import { EditUserForm } from './EditUserForm';
+import {
+  dialogContentClass,
+  dialogDescriptionClass,
+  dialogHeaderClass,
+  dialogIconClass,
+  dialogTitleClass,
+} from './user-dialog-styles';
 
 interface EditUserDialogProps {
   user: User;
@@ -36,23 +43,31 @@ export function EditUserDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[450px]">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl">
-            <Pencil className="h-5 w-5" />
-            Edit User
-          </DialogTitle>
-          <DialogDescription>
-            Update user information and settings.
-          </DialogDescription>
+      <DialogContent
+        className={`${dialogContentClass} max-h-[90vh] overflow-y-auto sm:max-w-[640px]`}
+      >
+        <DialogHeader className={dialogHeaderClass}>
+          <div className="flex items-start gap-3">
+            <div className={dialogIconClass}>
+              <Pencil className="h-5 w-5" />
+            </div>
+            <div>
+              <DialogTitle className={dialogTitleClass}>Edit user</DialogTitle>
+              <DialogDescription className={dialogDescriptionClass}>
+                Update workspace access, billing, and account status.
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
 
-        <EditUserForm
-          user={user}
-          onSubmit={handleSubmit}
-          onCancel={() => onOpenChange(false)}
-          isPending={isPending}
-        />
+        <div className="px-6 py-5">
+          <EditUserForm
+            user={user}
+            onSubmit={handleSubmit}
+            onCancel={() => onOpenChange(false)}
+            isPending={isPending}
+          />
+        </div>
       </DialogContent>
     </Dialog>
   );

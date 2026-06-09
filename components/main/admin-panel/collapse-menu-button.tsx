@@ -67,7 +67,12 @@ export function CollapseMenuButton({
       >
         <Button
           variant={isSubmenuActive ? 'secondary' : 'ghost'}
-          className="h-10 w-full justify-start"
+          className={cn(
+            'h-10 w-full justify-start rounded-lg',
+            isSubmenuActive
+              ? 'bg-primary/10 text-primary hover:bg-primary/15 dark:bg-primary/15 dark:text-white dark:hover:bg-primary/20'
+              : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-white',
+          )}
         >
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center">
@@ -110,7 +115,12 @@ export function CollapseMenuButton({
                 ? 'secondary'
                 : 'ghost'
             }
-            className="mb-1 h-10 w-full justify-start"
+            className={cn(
+              'mb-1 h-10 w-full justify-start rounded-lg',
+              (active === undefined && pathname === href) || active
+                ? 'bg-primary/10 text-primary hover:bg-primary/15 dark:bg-primary/15 dark:text-white dark:hover:bg-primary/20'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-white',
+            )}
             asChild
           >
             <Link href={href}>
@@ -140,7 +150,12 @@ export function CollapseMenuButton({
             <DropdownMenuTrigger asChild>
               <Button
                 variant={isSubmenuActive ? 'secondary' : 'ghost'}
-                className="mb-1 h-10 w-full justify-start"
+                className={cn(
+                  'mb-1 h-10 w-full justify-start rounded-lg',
+                  isSubmenuActive
+                    ? 'bg-primary/10 text-primary hover:bg-primary/15 dark:bg-primary/15 dark:text-white dark:hover:bg-primary/20'
+                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-white',
+                )}
               >
                 <div className="flex w-full items-center justify-between">
                   <div className="flex items-center">
@@ -174,10 +189,12 @@ export function CollapseMenuButton({
         {submenus.map(({ href, label, active }, index) => (
           <DropdownMenuItem key={index} asChild>
             <Link
-              className={`cursor-pointer ${
-                ((active === undefined && pathname === href) || active) &&
-                'bg-secondary'
-              }`}
+              className={cn(
+                'cursor-pointer',
+                (active === undefined && pathname === href) || active
+                  ? 'bg-primary/10 text-primary dark:bg-primary/15 dark:text-white'
+                  : '',
+              )}
               href={href}
             >
               <p className="max-w-[180px] truncate">{label}</p>

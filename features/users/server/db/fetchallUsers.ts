@@ -6,6 +6,10 @@ import 'server-only';
  */
 export async function fetchUsers() {
   try {
+    const now = new Date();
+    const year = now.getUTCFullYear();
+    const month = now.getUTCMonth() + 1;
+
     return await prisma.user.findMany({
       select: {
         id: true,
@@ -18,7 +22,26 @@ export async function fetchUsers() {
         status: true,
         lastActive: true,
         billingRate: true,
+        monthlyUsage: {
+          where: {
+            year,
+            month,
+          },
+          select: {
+            totalCalls: true,
+            totalDurationSec: true,
+            totalProviderCost: true,
+            totalCustomerCost: true,
+            totalProfit: true,
+          },
+          take: 1,
+        },
       },
+      orderBy: [
+        {
+          createdAt: 'desc',
+        },
+      ],
     });
   } catch (error) {
     console.error('Error fetching users:', error);

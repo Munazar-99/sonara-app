@@ -6,6 +6,10 @@ import { sendInvitationEmail } from '../email/sendInvitationEmail';
 
 import type { AddUserFormValues } from '../../utils/schema';
 import { createInvitedUser } from '@/server/db/auth/createInvitedUser';
+import {
+  mapAuthorizationError,
+  requireUsersAdmin,
+} from '../auth/require-users-admin';
 
 export async function createUserAction(formData: AddUserFormValues) {
   const parsed = addUserSchema.safeParse(formData);
@@ -18,12 +22,22 @@ export async function createUserAction(formData: AddUserFormValues) {
   }
 
   try {
+    await requireUsersAdmin();
+
     const result = await createInvitedUser(parsed.data);
 
     if (!result.success) {
       return {
         success: false,
         message: 'User already exists',
+      };
+    }
+
+    if (!parsed.data.sendInvite) {
+      return {
+        data: result.user,
+        success: true,
+        message: 'User created without sending an invitation.',
       };
     }
 
@@ -48,10 +62,11 @@ export async function createUserAction(formData: AddUserFormValues) {
     };
   } catch (error) {
     console.error('createUserAction:', error);
+    const authorizationError = mapAuthorizationError(error);
 
     return {
       success: false,
-      message: 'Failed to create user',
+      message: authorizationError ?? 'Failed to create user',
     };
   }
 }

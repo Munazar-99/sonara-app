@@ -53,7 +53,7 @@ export function Menu({ isOpen }: MenuProps) {
           {menuList.map(({ groupLabel, menus }, index) => (
             <li className={cn('w-full', groupLabel ? 'pt-5' : '')} key={index}>
               {(isOpen && groupLabel) || isOpen === undefined ? (
-                <p className="max-w-[248px] truncate px-4 pb-2 text-sm font-medium text-muted-foreground">
+                <p className="max-w-[248px] truncate px-4 pb-2 text-sm font-medium text-slate-500 dark:text-slate-500">
                   {groupLabel}
                 </p>
               ) : !isOpen && isOpen !== undefined && groupLabel ? (
@@ -87,7 +87,14 @@ export function Menu({ isOpen }: MenuProps) {
                                   ? 'secondary'
                                   : 'ghost'
                               }
-                              className="mb-1 h-10 w-full justify-start"
+                              className={cn(
+                                'mb-1 h-10 w-full justify-start rounded-lg',
+                                (active === undefined &&
+                                  pathname.startsWith(href)) ||
+                                  active
+                                  ? 'bg-primary/10 text-primary hover:bg-primary/15 dark:bg-primary/15 dark:text-white dark:hover:bg-primary/20'
+                                  : 'text-slate-600 hover:bg-slate-100 hover:text-slate-950 dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-white',
+                              )}
                               asChild
                             >
                               <Link href={href}>
@@ -142,7 +149,7 @@ export function Menu({ isOpen }: MenuProps) {
                   <Button
                     onClick={handleLogOut}
                     variant="outline"
-                    className="mt-5 h-10 w-full justify-center dark:bg-dark dark:hover:bg-primary dark:hover:text-white"
+                    className="mt-5 h-10 w-full justify-center rounded-lg border-slate-200 bg-white text-slate-700 hover:bg-slate-100 hover:text-slate-950 dark:border-white/10 dark:bg-[#111827] dark:text-slate-300 dark:hover:bg-primary/20 dark:hover:text-white"
                     disabled={loading}
                   >
                     {loading ? (
